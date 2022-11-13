@@ -11,6 +11,16 @@ struct renderObject
 };
 static std::vector<renderObject*> renderObjects;
 
+struct gameToRenderObject
+{
+    Uint8 id; //corrasponds to the render object to use
+    glm::vec4 position;
+    glm::vec4 scale;
+    glm::vec4 rotation;
+};
+static std::vector<gameToRenderObject*> gameToRenderObjects;
+
 static inline void initRenderObjects(const unsigned int defaultShader);
 static inline unsigned int setup_default_shaders();
 static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int vertexAmount, const unsigned int* indices, const unsigned int indicesSize, const char* name, const unsigned int shader);
+static inline void genTextures();

@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#define STB_IMAGE_IMPLEMENTATION
 
 #include "../../vendor/SDL/include/SDL.h"
 #include "../../vendor/SDL/include/SDL_stdinc.h"
@@ -21,6 +22,9 @@
 #include "../../vendor/imgui/backends/imgui_impl_opengl3.cpp"
 
 #include "../../vendor/portaudio/include/portaudio.h"
+
+#include "../vendor/stb/stb_image.h"
+#include "../vendor/stb/stb_image_write.h"
 
 #include <string>
 #include <vector>

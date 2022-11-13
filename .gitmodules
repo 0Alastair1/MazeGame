@@ -13,3 +13,6 @@
 [submodule "vendor/portaudio"]
 	path = vendor/portaudio
 	url = https://github.com/portaudio/portaudio
+[submodule "vendor/stb"]
+	path = vendor/stb
+	url = https://github.com/nothings/stb

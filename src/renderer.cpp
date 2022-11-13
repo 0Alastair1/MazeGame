@@ -15,6 +15,9 @@ void render()
         increment = 0.001;
     
     r += increment;
+
+    //figure out what to do here
+    //int location = glGetUniformLocation(defaultShader, "u_Color");
     glUniform4f(0, r+r/4, r-r/2, r+r/2, r+r/2);
 
     //test draw all render objects. *not actual game objects*
@@ -25,6 +28,10 @@ void render()
         glDrawElements(GL_TRIANGLES, renderObject->indicies, GL_UNSIGNED_INT, nullptr);
     }
 
+    /*
+        todo - leave the added of objects sorted by the id the renderobject uses to the game logic side
+        in render keep track of the previsouly used renderobject and only rebind everything if it changed
+    */
 
     SDL_GL_SwapWindow(window);
 
@@ -39,15 +46,15 @@ void initRender()
 
     SDL_GL_SetSwapInterval(0); // no vysnc
 
-    //glDisable(GL_DEPTH_TEST);
-	//glDisable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     //create default  render objects
     const unsigned int defaultShader = setup_default_shaders();
     initRenderObjects(defaultShader);
 
-    int location = glGetUniformLocation(defaultShader, "u_Color");
-    glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f);
+    genTextures();
 
 
     return;
@@ -88,7 +95,6 @@ static inline void make_render_object_type(const Uint8 id, const float* vertexDa
     glGenBuffers(1, &indexbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
-
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -184,4 +190,21 @@ static inline unsigned int makeShader(const char* vertexSrc, const char* fragmen
 
     //default
     return program;
+}
+
+
+static inline void genTextures()
+{
+    const char* textureDirectory = "";
+    const char* textureNames[] =
+    {
+        "wood",
+    };
+
+    for(const char* textureName : textureNames)
+    {
+
+    }
+    stbi_set_flip_vertically_on_load(1);
+   //unsigned char* buffer = stbi_load("")
 }
