@@ -37,6 +37,7 @@
 #include <cstdio>
 #include <thread>
 #include <ostream>
+#include <cstdlib>
 
 #include "./include/audio.hpp"
 #include "./include/renderer.hpp"

@@ -7,23 +7,17 @@ void render()
     //render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    static float r = 0.0;
-    static float increment = 0.001;
-    if(r > 0.75)
-        increment = -0.001;
-    else if(r < 0.25)
-        increment = 0.001;
-    
-    r += increment;
-
-    //figure out what to do here
-    //int location = glGetUniformLocation(defaultShader, "u_Color");
-    glUniform4f(0, r+r/4, r-r/2, r+r/2, r+r/2);
-
     //test draw all render objects. *not actual game objects*
     for(renderObject* renderObject : renderObjects)
     {
-        glUseProgram(renderObject->program);
+        glUseProgram(renderObject->shader->shaderID); //bind shader
+
+        performUniformOperation(renderObject->shader); //perform appropriate uniform operations depending on object shader
+
+        //
+        glBindTexture(GL_TEXTURE_2D, renderObject->texture->textureID); //bind texture
+
+
         glBindVertexArray(renderObject->vao);
         glDrawElements(GL_TRIANGLES, renderObject->indicies, GL_UNSIGNED_INT, nullptr);
     }
@@ -38,8 +32,25 @@ void render()
     return;
 }
 
+static inline void performUniformOperation(const shaderObject* program)
+{
+    if(!strcmp(program->shaderName, "defaultShader"))
+    {
+        static float r = 0.0;
+        static float increment = 0.001;
+        if(r > 0.75)
+            increment = -0.001;
+        else if(r < 0.25)
+            increment = 0.001;
+        
+        r += increment;
 
-void initRender()
+        const int location = glGetUniformLocation(program->shaderID, "u_Color");//cache this fixme
+        glUniform4f(location, r+r/4, r-r/2, r+r/2, r+r/2);
+    }
+}
+
+static inline void initRender()
 {
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -50,31 +61,31 @@ void initRender()
 	glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    //create default  render objects
-    const unsigned int defaultShader = setup_default_shaders();
-    initRenderObjects(defaultShader);
-
     genTextures();
+
+    //create default  render objects
+    setup_default_shaders();
+    initRenderObjects();
 
 
     return;
 }
 
-static inline void initRenderObjects(const unsigned int defaultShader)
+static inline void initRenderObjects()
 {
     const float triangleData[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f,  0.3f, 0.0f,
+    -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex coods*/
+    0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex coods*/
+    0.0f,  0.3f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f /*tex coods*/
     };
-    const unsigned int numberofCollums = 3;
+    const unsigned int numberofCollums = 6;
     const unsigned int triangleIndecies[] = {
         0, 1, 2
     };
-    make_render_object_type(0, triangleData, sizeof(triangleData), numberofCollums, triangleIndecies, sizeof(triangleIndecies), "triangle", defaultShader);
+    make_render_object_type(0, triangleData, sizeof(triangleData), numberofCollums, triangleIndecies, sizeof(triangleIndecies), "triangle", "defaultShader", "wood.png");
 }
 
-static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const unsigned int shader)
+static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, const char* textureName)
 {
     //vertex array object
     unsigned int VertexArrayID;
@@ -89,6 +100,9 @@ static inline void make_render_object_type(const Uint8 id, const float* vertexDa
 
     glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
     glVertexAttribPointer(0, (vertexDataSize/sizeof(float))/numberofCollums, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)0 );
+
+    glEnableVertexAttribArray(1); //color
+    glVertexAttribPointer(1, (vertexDataSize/sizeof(float))/numberofCollums, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)( 3*sizeof(float) ));
 
     //index buffer object
     unsigned int indexbuffer;
@@ -107,25 +121,33 @@ static inline void make_render_object_type(const Uint8 id, const float* vertexDa
     object->id = id;
     object->indicies = indicesSize/sizeof(unsigned int);
     object->name = name;
-    object->program = shader;
     object->vao = VertexArrayID;
     //maybe add index buffer here too - old intel driver bug
     //maybe add them all and not use vertex array - performance
+    object->texture = getTexture(textureName);
+    object->shader = getShader(shaderName);
 
     renderObjects.push_back(object);
 }
 
-static inline unsigned int setup_default_shaders()
+static inline void setup_default_shaders()
 {
     const char defaultVsSource[] =
     {
-        "#version 330 core \n	\
+        "#version 330 core \n \
         layout(location = 0) in vec3 vertexPosition_modelspace; \
+        layout(location = 1) in vec3 vColor; \
+        \
         uniform vec4 u_Color; \
+        \
+        out vec4 fColor;\
+        \
         void main()	\
         {	\
         	gl_Position.xyz = vertexPosition_modelspace;	\
         	gl_Position.w = 1.0;	\
+            fColor = vec4(vColor, 1.0f) + u_Color; \
+            \
         }"
     };
 
@@ -133,17 +155,18 @@ static inline unsigned int setup_default_shaders()
     {
         "#version 330 core \n    \
         layout(location = 0) out vec4 color;	\
-        uniform vec4 u_Color; \
+        /*uniform vec4 u_Color;*/ \
+        in vec4 fColor; \
         void main()	\
         {	\
-        	color = u_Color;	\
+        	color = fColor;\
         }"
     };
 
-    return makeShader(defaultVsSource, defaultFsSource);
+    makeShader(defaultVsSource, defaultFsSource, "defaultShader");
 }
 
-static inline unsigned int makeShader(const char* vertexSrc, const char* fragmentSrc)
+static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName)
 {
     GLuint defaultVs = glCreateShader( GL_VERTEX_SHADER);
 
@@ -188,23 +211,81 @@ static inline unsigned int makeShader(const char* vertexSrc, const char* fragmen
     glDeleteShader(defaultVs);
     glDeleteShader(defaultFs);
 
-    //default
-    return program;
+    shaderObject* shader = new shaderObject;
+    shader->shaderID = program;
+    shader->shaderName = shaderName;
+    shaderObjects.push_back(shader);
 }
 
 
 static inline void genTextures()
 {
-    const char* textureDirectory = "";
+    const char* textureDirectory = "./textures/";
     const char* textureNames[] =
     {
-        "wood",
+        "wood.png",
     };
+
+    stbi_set_flip_vertically_on_load(1);
 
     for(const char* textureName : textureNames)
     {
+        char* filePath = (char*)malloc(strlen(textureDirectory) + strlen(textureName));
+        strcpy(filePath,(char*)textureDirectory);
+        strcat(filePath,(char*)textureName);
 
+        int width = 0;
+        int height = 0;
+        int bpp = 0;
+        unsigned char* buffer = stbi_load(filePath, &width, &height, &bpp, 4);
+        free(filePath);
+
+        unsigned int textureID = 0;
+
+        glGenTextures(1, &textureID);
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        stbi_image_free(buffer);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        textureObject* texture = new textureObject;
+        texture->textureID = textureID;
+        texture->textureName = textureName;
+        textureObjects.push_back(texture);
     }
-    stbi_set_flip_vertically_on_load(1);
-   //unsigned char* buffer = stbi_load("")
+}
+
+static inline textureObject* getTexture(const char* textureName)
+{
+    for(textureObject* texture : textureObjects)
+    {
+        if(!strcmp(texture->textureName, textureName))
+        {
+            return texture;
+        }
+    }
+    printf("texture not found");
+    return textureObjects[0];
+}
+
+static inline shaderObject* getShader(const char* shaderName)
+{
+    for(shaderObject* shader : shaderObjects)
+    {
+        if(!strcmp(shader->shaderName, shaderName))
+        {
+            return shader;
+        }
+    }
+    printf("shader not found");
+    return shaderObjects[0];
 }

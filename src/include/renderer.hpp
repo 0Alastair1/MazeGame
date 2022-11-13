@@ -1,13 +1,25 @@
 static inline void initRender();
-static inline unsigned int makeShader(const char* vertexSrc, const char* fragmentSrc);
 
+struct textureObject
+{
+    const char* textureName;
+    unsigned int textureID;
+};
+static std::vector<textureObject*> textureObjects;
+struct shaderObject
+{
+    unsigned int shaderID;
+    const char* shaderName;
+};
+static std::vector<shaderObject*> shaderObjects;
 struct renderObject
 {
     Uint8 id; //id for whatever use
     Uint32 indicies; //number of indices to be drawn from the index buffer
     const char* name; //name in string of the object
-    unsigned int program; //contains the shaders
+    const shaderObject* shader; //contains the shaders
     unsigned int vao; //contains vertex and index buffer
+    const textureObject* texture;
 };
 static std::vector<renderObject*> renderObjects;
 
@@ -20,7 +32,12 @@ struct gameToRenderObject
 };
 static std::vector<gameToRenderObject*> gameToRenderObjects;
 
-static inline void initRenderObjects(const unsigned int defaultShader);
-static inline unsigned int setup_default_shaders();
-static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int vertexAmount, const unsigned int* indices, const unsigned int indicesSize, const char* name, const unsigned int shader);
+
+static inline void initRenderObjects();
+static inline void setup_default_shaders();
+static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, const char* textureName);
 static inline void genTextures();
+static inline textureObject* getTexture(const char* textureName);
+static inline shaderObject* getShader(const char* shaderName);
+static inline void performUniformOperation(const shaderObject* program);
+static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
