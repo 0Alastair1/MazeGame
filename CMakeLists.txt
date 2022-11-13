@@ -32,7 +32,7 @@ target_link_libraries(mazeGame PRIVATE samplerate)
 
 target_compile_features(mazeGame PUBLIC cxx_std_17)
 
-file(COPY "./res/textures" DESTINATION "./textures")
+file(COPY "./res/textures" DESTINATION "./")
 
 #sets compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")

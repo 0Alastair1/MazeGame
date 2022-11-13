@@ -10,6 +10,7 @@ struct shaderObject
 {
     unsigned int shaderID;
     const char* shaderName;
+    Sint32 textureUniformLocations[8];
 };
 static std::vector<shaderObject*> shaderObjects;
 struct renderObject
@@ -19,7 +20,7 @@ struct renderObject
     const char* name; //name in string of the object
     const shaderObject* shader; //contains the shaders
     unsigned int vao; //contains vertex and index buffer
-    const textureObject* texture;
+    std::vector<const textureObject*> textures;
 };
 static std::vector<renderObject*> renderObjects;
 
@@ -35,7 +36,7 @@ static std::vector<gameToRenderObject*> gameToRenderObjects;
 
 static inline void initRenderObjects();
 static inline void setup_default_shaders();
-static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, const char* textureName);
+static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, std::vector<const char*> textureNames);
 static inline void genTextures();
 static inline textureObject* getTexture(const char* textureName);
 static inline shaderObject* getShader(const char* shaderName);

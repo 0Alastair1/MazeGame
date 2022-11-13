@@ -1,7 +1,4 @@
 
-
-//8bit 640×400
-
 void render() 
 {
     //render
@@ -14,9 +11,15 @@ void render()
 
         performUniformOperation(renderObject->shader); //perform appropriate uniform operations depending on object shader
 
-        //
-        glBindTexture(GL_TEXTURE_2D, renderObject->texture->textureID); //bind texture
-
+        Uint8 textureIndex = 0;
+        const Sint32* textureUniformLocations = renderObject->shader->textureUniformLocations;
+        for(auto texture : renderObject->textures) //bind all the textures to shader
+        {
+            glActiveTexture(GL_TEXTURE0 + textureIndex); //bind to slot 0
+            glBindTexture(GL_TEXTURE_2D, texture->textureID); //bind texture
+            glUniform1i(textureUniformLocations[textureIndex], textureIndex);
+            textureIndex++;
+        }        
 
         glBindVertexArray(renderObject->vao);
         glDrawElements(GL_TRIANGLES, renderObject->indicies, GL_UNSIGNED_INT, nullptr);
@@ -74,18 +77,20 @@ static inline void initRender()
 static inline void initRenderObjects()
 {
     const float triangleData[] = {
-    -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex coods*/
-    0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex coods*/
-    0.0f,  0.3f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f /*tex coods*/
+    -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f,
+    0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f,
+    0.5f,  0.3f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,
+    -0.5f,  0.3f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f
     };
-    const unsigned int numberofCollums = 6;
+    const unsigned int numberofCollums = 8;
     const unsigned int triangleIndecies[] = {
-        0, 1, 2
+        0, 1, 2,
+        0, 2, 3
     };
-    make_render_object_type(0, triangleData, sizeof(triangleData), numberofCollums, triangleIndecies, sizeof(triangleIndecies), "triangle", "defaultShader", "wood.png");
+    make_render_object_type(0, triangleData, sizeof(triangleData), numberofCollums, triangleIndecies, sizeof(triangleIndecies), "triangle", "defaultShader", {"wood.png"});
 }
 
-static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, const char* textureName)
+static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, std::vector<const char*> textureNames)
 {
     //vertex array object
     unsigned int VertexArrayID;
@@ -99,10 +104,13 @@ static inline void make_render_object_type(const Uint8 id, const float* vertexDa
     glBufferData(GL_ARRAY_BUFFER, vertexDataSize, vertexData, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
-    glVertexAttribPointer(0, (vertexDataSize/sizeof(float))/numberofCollums, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)0 );
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)0 );
 
     glEnableVertexAttribArray(1); //color
-    glVertexAttribPointer(1, (vertexDataSize/sizeof(float))/numberofCollums, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)( 3*sizeof(float) ));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)( 3*sizeof(float) ));
+
+    glEnableVertexAttribArray(2); //texture coods
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, numberofCollums*(sizeof(float)),(void*)( 6*sizeof(float) ));
 
     //index buffer object
     unsigned int indexbuffer;
@@ -124,7 +132,10 @@ static inline void make_render_object_type(const Uint8 id, const float* vertexDa
     object->vao = VertexArrayID;
     //maybe add index buffer here too - old intel driver bug
     //maybe add them all and not use vertex array - performance
-    object->texture = getTexture(textureName);
+    for(auto textureName : textureNames)
+    {
+        object->textures.push_back(getTexture(textureName));
+    }
     object->shader = getShader(shaderName);
 
     renderObjects.push_back(object);
@@ -137,16 +148,19 @@ static inline void setup_default_shaders()
         "#version 330 core \n \
         layout(location = 0) in vec3 vertexPosition_modelspace; \
         layout(location = 1) in vec3 vColor; \
+        layout(location = 2) in vec2 vTexCord; \
         \
         uniform vec4 u_Color; \
         \
         out vec4 fColor;\
+        out vec2 texCord; \
         \
         void main()	\
         {	\
         	gl_Position.xyz = vertexPosition_modelspace;	\
         	gl_Position.w = 1.0;	\
             fColor = vec4(vColor, 1.0f) + u_Color; \
+            texCord = vTexCord; \
             \
         }"
     };
@@ -155,11 +169,25 @@ static inline void setup_default_shaders()
     {
         "#version 330 core \n    \
         layout(location = 0) out vec4 color;	\
+        \
         /*uniform vec4 u_Color;*/ \
+        \
         in vec4 fColor; \
+        in vec2 texCord; \
+        \
+        uniform sampler2D TextureSlot0; \
+        uniform sampler2D TextureSlot1; \
+        uniform sampler2D TextureSlot2; \
+        uniform sampler2D TextureSlot3; \
+        uniform sampler2D TextureSlot4; \
+        uniform sampler2D TextureSlot5; \
+        uniform sampler2D TextureSlot6; \
+        uniform sampler2D TextureSlot7; \
+        uniform sampler2D TextureSlot8; \
+        \
         void main()	\
         {	\
-        	color = fColor;\
+        	color = texture(TextureSlot0, texCord) * fColor; \
         }"
     };
 
@@ -183,7 +211,6 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 		glGetShaderInfoLog(defaultVs, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
 		printf("%s\n", &VertexShaderErrorMessage[0]);
 	}
-
 
     GLuint defaultFs = glCreateShader( GL_FRAGMENT_SHADER );
 
@@ -214,6 +241,18 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
     shaderObject* shader = new shaderObject;
     shader->shaderID = program;
     shader->shaderName = shaderName;
+
+    //get locations from shader
+    shader->textureUniformLocations[0] = glGetUniformLocation(program, "TextureSlot0");
+    shader->textureUniformLocations[1] = glGetUniformLocation(program, "TextureSlot1");
+    shader->textureUniformLocations[2] = glGetUniformLocation(program, "TextureSlot2");
+    shader->textureUniformLocations[3] = glGetUniformLocation(program, "TextureSlot3");
+    shader->textureUniformLocations[4] = glGetUniformLocation(program, "TextureSlot4");
+    shader->textureUniformLocations[5] = glGetUniformLocation(program, "TextureSlot5");
+    shader->textureUniformLocations[6] = glGetUniformLocation(program, "TextureSlot6");
+    shader->textureUniformLocations[7] = glGetUniformLocation(program, "TextureSlot7");
+    shader->textureUniformLocations[8] = glGetUniformLocation(program, "TextureSlot8");
+
     shaderObjects.push_back(shader);
 }
 
