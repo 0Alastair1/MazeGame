@@ -275,8 +275,8 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 
 static inline void genTextures() //textures are made automaticlly when added into the textures folder
 {
-    boost::filesystem::path aaa = boost::dll::program_location().parent_path();
-    const char* currentDir = aaa.string().c_str();
+    boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
+    const char* currentDir = currentDirPath.string().c_str();
     const char* texturesFolder = "/textures/";
     char* textureDirectory = (char*)malloc(strlen(currentDir) + strlen(texturesFolder));
     strcpy(textureDirectory,(char*)currentDir);
