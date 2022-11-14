@@ -19,3 +19,6 @@
 [submodule "vendor/boost"]
 	path = vendor/boost
 	url = https://github.com/boostorg/boost
+[submodule "vendor/container_hash"]
+	path = vendor/container_hash
+	url = https://github.com/boostorg/container_hash.git

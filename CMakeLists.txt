@@ -4,9 +4,9 @@ project(mazeGame)
 
 set(BUILD_SHARED_LIBS OFF)
 
-set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_STATIC_LIBS OFF) 
 set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME ON) 
+set(Boost_USE_STATIC_RUNTIME OFF) 
 
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
@@ -15,8 +15,33 @@ add_subdirectory(vendor/boost EXCLUDE_FROM_ALL)
 
 add_executable(mazeGame src/main.cpp)
 
-include_directories(mazeGame PRIVATE src/include src/
+include_directories(mazeGame PUBLIC src/include src/
     /home/computer/Documents/GitHub/MazeGame/vendor/stb/ 
+    vendor 
+
+    vendor/ 
+    vendor/boost/libs/config/include/ 
+    vendor/boost/libs/dll/include/ 
+    vendor/boost/libs/filesystem/include/ 
+    vendor/boost/libs/assert/include/ 
+    vendor/boost/libs/system/include/ 
+    vendor/boost/libs/type_traits/include/ 
+    vendor/boost/libs/iterator/include/ 
+    vendor/boost/libs/mpl/include/ 
+    vendor/boost/libs/preprocessor/include/ 
+    vendor/boost/libs/static_assert/include/ 
+    vendor/boost/libs/core/include/ 
+    vendor/boost/libs/detail/include/ 
+    vendor/boost/libs/io/include/ 
+    vendor/boost/libs/functional/include/ 
+
+    vendor/container_hash/include/ 
+
+    vendor/boost/libs/smart_ptr/include/ 
+    vendor/boost/libs/throw_exception/include/ 
+    vendor/boost/libs/predef/include/ 
+
+
     vendor/libsamplerate/include/ 
     vendor/portaudio/include/ 
     res/textures/
@@ -25,15 +50,16 @@ include_directories(mazeGame PRIVATE src/include src/
     vendor/glad/src/ 
     vendor/glm/ 
     vendor/imgui/ 
-    vendor/ 
 )
 
 target_link_libraries(mazeGame PRIVATE SDL2-static)
 target_link_libraries(mazeGame PRIVATE PortAudio)
 target_link_libraries(mazeGame PRIVATE samplerate)
-target_link_libraries(mazeGame PRIVATE Boost_LIBRARIES)
+target_link_libraries(mazeGame PRIVATE Boost::filesystem Boost::system)
 #target_link_libraries(mazeGame PRIVATE ${OPENGL_gl_LIBRARY})
 
+#add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) 
+#add_definitions(-DBOOST_NO_CXX11_SCOPED_ENUMS)
 #set(CMAKE_BUILD_TYPE Release)
 
 target_compile_features(mazeGame PUBLIC cxx_std_17)

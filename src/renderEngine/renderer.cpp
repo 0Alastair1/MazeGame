@@ -80,7 +80,7 @@ static inline void initRender()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     genTextures();
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // increases stability for some reason
     //create default  render objects
     setup_default_shaders();
     initRenderObjects();
@@ -275,7 +275,8 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 
 static inline void genTextures() //textures are made automaticlly when added into the textures folder
 {
-    const char* currentDir = std::filesystem::current_path().string().c_str();
+    boost::filesystem::path aaa = boost::dll::program_location().parent_path();
+    const char* currentDir = aaa.string().c_str();
     const char* texturesFolder = "/textures/";
     char* textureDirectory = (char*)malloc(strlen(currentDir) + strlen(texturesFolder));
     strcpy(textureDirectory,(char*)currentDir);
@@ -297,6 +298,7 @@ static inline void genTextures() //textures are made automaticlly when added int
 
     for(const char* textureName : textureNames)
     {
+        
         char* filePath = (char*)malloc(strlen(textureDirectory) + strlen(textureName));
         strcpy(filePath,(char*)textureDirectory);
         strcat(filePath,(char*)textureName);
