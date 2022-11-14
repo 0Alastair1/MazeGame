@@ -4,40 +4,52 @@ void render()
     //render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //test draw all render objects. *not actual game objects*
-    for(renderObject* renderObject : renderObjects)
+    std::string previousRenderObjectName = "";
+    std::string previousShaderName = "";
+
+    for(gameToRenderObject* gameObject : gameToRenderObjects)
     {
-        glUseProgram(renderObject->shader->shaderID); //bind shader
+        const renderObject* renderObj = gameObject->renderObj;
 
-        performUniformOperation(renderObject->shader); //perform appropriate uniform operations depending on object shader
+        //bind shader
+        if(previousShaderName != renderObj->shader->shaderName)
+            glUseProgram(renderObj->shader->shaderID); 
 
-        Uint8 textureIndex = 0;
-        const Sint32* textureUniformLocations = renderObject->shader->textureUniformLocations;
-        for(auto texture : renderObject->textures) //bind all the textures to shader
+        //perform appropriate uniform operations depending on object shader and gameObject properties
+        performUniformOperation(gameObject);
+
+        if(previousRenderObjectName != renderObj->name)
         {
-            glActiveTexture(GL_TEXTURE0 + textureIndex); //bind to slot 0
-            glBindTexture(GL_TEXTURE_2D, texture->textureID); //bind texture
-            glUniform1i(textureUniformLocations[textureIndex], textureIndex);
-            textureIndex++;
-        }        
+            //bind textures
+            Uint8 textureIndex = 0;
+            const Sint32* textureUniformLocations = renderObj->shader->textureUniformLocations;
+            for(auto texture : renderObj->textures) //bind all the textures to shader
+            {
+                glActiveTexture(GL_TEXTURE0 + textureIndex); //bind to slot 0
+                glBindTexture(GL_TEXTURE_2D, texture->textureID); //bind texture
+                glUniform1i(textureUniformLocations[textureIndex], textureIndex);
+                textureIndex++;
+            }    
 
-        glBindVertexArray(renderObject->vao);
-        glDrawElements(GL_TRIANGLES, renderObject->indicies, GL_UNSIGNED_INT, nullptr);
+            //bind vao
+            glBindVertexArray(renderObj->vao);
+        }    
+
+        //draw
+        glDrawElements(GL_TRIANGLES, renderObj->indicies, GL_UNSIGNED_INT, nullptr);
+
+        previousShaderName = renderObj->shader->shaderName;
+        previousRenderObjectName = renderObj->name;
     }
-
-    /*
-        todo - leave the added of objects sorted by the id the renderobject uses to the game logic side
-        in render keep track of the previsouly used renderobject and only rebind everything if it changed
-    */
 
     SDL_GL_SwapWindow(window);
 
     return;
 }
 
-static inline void performUniformOperation(const shaderObject* program)
+static inline void performUniformOperation(const gameToRenderObject* gameObject)
 {
-    if(!strcmp(program->shaderName, "defaultShader"))
+    if(!strcmp(gameObject->renderObj->shader->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop
     {
         static float r = 0.0;
         static float increment = 0.001;
@@ -48,7 +60,7 @@ static inline void performUniformOperation(const shaderObject* program)
         
         r += increment;
 
-        const int location = glGetUniformLocation(program->shaderID, "u_Color");//cache this fixme
+        const int location = glGetUniformLocation(gameObject->renderObj->shader->shaderID, "u_Color");//cache this fixme
         glUniform4f(location, r+r/4, r-r/2, r+r/2, r+r/2);
     }
 }
@@ -60,9 +72,12 @@ static inline void initRender()
 
     SDL_GL_SetSwapInterval(0); // no vysnc
 
+    glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     genTextures();
 
@@ -70,11 +85,10 @@ static inline void initRender()
     setup_default_shaders();
     initRenderObjects();
 
-
     return;
 }
 
-static inline void initRenderObjects()
+static inline void initRenderObjects() //default objects
 {
     const float triangleData[] = {
     -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f,
@@ -87,7 +101,9 @@ static inline void initRenderObjects()
         0, 1, 2,
         0, 2, 3
     };
-    make_render_object_type(0, triangleData, sizeof(triangleData), numberofCollums, triangleIndecies, sizeof(triangleIndecies), "triangle", "defaultShader", {"wood.png"});
+    make_render_object_type(0, triangleData, sizeof(triangleData), numberofCollums, triangleIndecies, sizeof(triangleIndecies), 
+        "square", "defaultShader", {"wood.png"}
+    );
 }
 
 static inline void make_render_object_type(const Uint8 id, const float* vertexData, const unsigned int vertexDataSize, const unsigned int numberofCollums, const unsigned int* indices, const unsigned int indicesSize, const char* name, const char* shaderName, std::vector<const char*> textureNames)
@@ -257,13 +273,25 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 }
 
 
-static inline void genTextures()
+static inline void genTextures() //textures are made automaticlly when added into the textures folder
 {
-    const char* textureDirectory = "./textures/";
-    const char* textureNames[] =
+    const char* currentDir = std::filesystem::current_path().string().c_str();
+    const char* texturesFolder = "/textures/";
+    char* textureDirectory = (char*)malloc(strlen(currentDir) + strlen(texturesFolder));
+    strcpy(textureDirectory,(char*)currentDir);
+    strcat(textureDirectory,(char*)texturesFolder);
+
+    std::vector<const char*> textureNames;
+
+    for (const auto & entry : std::filesystem::directory_iterator(textureDirectory))
     {
-        "wood.png",
-    };
+        if(std::filesystem::is_directory(entry.path()))
+        {
+            continue;
+        }
+
+        textureNames.push_back(std::filesystem::path{entry.path()}.filename().string().c_str());
+    }
 
     stbi_set_flip_vertically_on_load(1);
 
@@ -307,7 +335,7 @@ static inline textureObject* getTexture(const char* textureName)
 {
     for(textureObject* texture : textureObjects)
     {
-        if(!strcmp(texture->textureName, textureName))
+        if(!strcmp(texture->textureName.c_str(), textureName))
         {
             return texture;
         }
@@ -320,11 +348,43 @@ static inline shaderObject* getShader(const char* shaderName)
 {
     for(shaderObject* shader : shaderObjects)
     {
-        if(!strcmp(shader->shaderName, shaderName))
+        if(!strcmp(shader->shaderName.c_str(), shaderName))
         {
             return shader;
         }
     }
     printf("shader not found");
     return shaderObjects[0];
+}
+
+static inline renderObject* getRenderObject(const char* renderObjectName)
+{
+    for(renderObject* renderObj : renderObjects)
+    {
+        if(!strcmp(renderObj->name.c_str(), renderObjectName))
+        {
+            return renderObj;
+        }
+    }
+    printf("render object not found");
+    return renderObjects[0];
+}
+
+static inline gameToRenderObject* makeGameObject()
+{
+    gameToRenderObject* gameObject = new gameToRenderObject;
+
+    gameToRenderObjects.push_back(gameObject);
+
+    return gameObject;
+}
+
+static inline void deleteGameObject(gameToRenderObject* gameObject)
+{
+    for(long unsigned int i=0; i < gameToRenderObjects.size(); i++){
+        if(gameToRenderObjects[i] == gameObject)
+        {
+            gameToRenderObjects.erase(gameToRenderObjects.begin() + i);
+        }
+    }
 }

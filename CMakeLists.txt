@@ -4,9 +4,14 @@ project(mazeGame)
 
 set(BUILD_SHARED_LIBS OFF)
 
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME ON) 
+
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/libsamplerate EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/boost EXCLUDE_FROM_ALL)
 
 add_executable(mazeGame src/main.cpp)
 
@@ -26,6 +31,7 @@ include_directories(mazeGame PRIVATE src/include src/
 target_link_libraries(mazeGame PRIVATE SDL2-static)
 target_link_libraries(mazeGame PRIVATE PortAudio)
 target_link_libraries(mazeGame PRIVATE samplerate)
+target_link_libraries(mazeGame PRIVATE Boost_LIBRARIES)
 #target_link_libraries(mazeGame PRIVATE ${OPENGL_gl_LIBRARY})
 
 #set(CMAKE_BUILD_TYPE Release)

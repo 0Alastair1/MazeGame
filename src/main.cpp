@@ -5,10 +5,11 @@ int main()
 {
     initUi();
     initRender();
+    initGame();
 
     mainLoop();
 
-    program_exit(0);
+    //program_exit(0);
     return 0;
 }
 
@@ -16,6 +17,7 @@ static inline void mainLoop()
 {
     while(true)
     {
+        gameLoop();
         updateInput();
         render();
     }

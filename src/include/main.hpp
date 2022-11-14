@@ -38,6 +38,7 @@
 #include <thread>
 #include <ostream>
 #include <cstdlib>
+//#include <mutex>
 
 #include "./include/audio.hpp"
 #include "./include/renderer.hpp"
@@ -48,12 +49,14 @@
 static SDL_Window *window;
 static SDL_GLContext glContext;
 
+//std::mutex mtx;
+
 static inline void program_exit(bool val);
 static inline void mainLoop();
 
 #include "windowUi.cpp"
-#include "audio.cpp"
-#include "renderer.cpp"
+#include "audioEngine/audio.cpp"
+#include "renderEngine/renderer.cpp"
 #include "input.cpp"
 #include "game.cpp"
 
