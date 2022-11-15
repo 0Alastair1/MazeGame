@@ -10,6 +10,10 @@ static inline void updateInput()
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                     SDL_GetWindowSize(window, &windowwidth, &windowheight);
                     glViewport(0, 0, windowwidth, windowheight);
+
+                    const float ratio = windowwidth/windowheight;
+                    const float scale = 700.0; 
+                    mainCamera.orthoProjectionMatrix = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
                 }
                 break;
 

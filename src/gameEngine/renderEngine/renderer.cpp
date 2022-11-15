@@ -10,6 +10,9 @@ void render()
     //view matrix - only needs to be ran once per frame
     glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), -mainCamera.position);
 
+    //projection matrix
+    glm::mat4 perspectiveProjectionMatrix = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1.0f); //fixme
+
     for(gameToRenderObject* gameObject : gameToRenderObjects)
     {
         const renderObject* renderObj = gameObject->renderObj;
@@ -19,7 +22,7 @@ void render()
             glUseProgram(renderObj->shader->shaderID); 
 
         //perform appropriate uniform operations depending on object shader and gameObject properties
-        performUniformOperation(gameObject, viewMatrix);
+        performUniformOperation(gameObject, viewMatrix, perspectiveProjectionMatrix);
 
         if(previousRenderObjectName != renderObj->name)
         {
@@ -52,7 +55,7 @@ void render()
     return;
 }
 
-static inline void performUniformOperation(const gameToRenderObject* gameObject, const glm::mat4 viewMatrix)
+static inline void performUniformOperation(const gameToRenderObject* gameObject, const glm::mat4 viewMatrix, const glm::mat4 perspectiveProjectionMatrix)
 {
     const shaderObject* shaderObj = gameObject->renderObj->shader;
     
@@ -68,21 +71,16 @@ static inline void performUniformOperation(const gameToRenderObject* gameObject,
         
         r += increment;
 
-        //todo put matrix stuff in uniform object
+        //todo put matrix stuff in uniform object?
 
         //projection matrix
         glm::mat4 projectionMatrix;
     
         if(gameObject->orthoProj)
-        {
-            const float ratio = windowwidth/windowheight;
-            const float scale = 700.0; 
-            projectionMatrix = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
-        }
+            projectionMatrix = mainCamera.orthoProjectionMatrix; //todo translate by camera rotation
         else
-        {
-            projectionMatrix = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1.0f); //fixme
-        }
+            projectionMatrix = perspectiveProjectionMatrix;
+        
 
         //model projection 
         glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), gameObject->position);
@@ -105,6 +103,10 @@ static inline void initRender()
 {
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    const float ratio = windowwidth/windowheight;
+    const float scale = 700.0; 
+    mainCamera.orthoProjectionMatrix = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
 
     SDL_GL_SetSwapInterval(0); // no vysnc
 
@@ -294,7 +296,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
     shader->shaderID = program;
     shader->shaderName = shaderName;
 
-    //get locations from shader
+    //get locations from shader- generic
     shader->textureUniformLocations[0] = glGetUniformLocation(program, "TextureSlot0");
     shader->textureUniformLocations[1] = glGetUniformLocation(program, "TextureSlot1");
     shader->textureUniformLocations[2] = glGetUniformLocation(program, "TextureSlot2");
@@ -307,7 +309,21 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");
     shader->u_mvpUniformLocation = glGetUniformLocation(program, "mvp");
-        
+
+    //non generic uniforms
+    const char* index = vertexSrc;
+    const char* indexSquash = vertexSrc;
+    while(index != nullptr)
+    {
+        index = strstr(indexSquash, "uniform");
+        if(index == nullptr)
+            break;
+        index += 13;
+        indexSquash = strstr(index, ";");
+
+        const char* uniformName = (const char*)malloc(indexSquash - index);
+        shader->nonGenericUniformlocations[uniformName] = glGetUniformLocation(program, uniformName);
+    }
 
     shaderObjects.push_back(shader);
 }

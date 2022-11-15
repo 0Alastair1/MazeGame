@@ -41,6 +41,7 @@
 #include <ostream>
 #include <cstdlib>
 //#include <mutex>
+#include <unordered_map>
 
 #include "./include/audio.hpp"
 #include "./include/renderer.hpp"
@@ -60,8 +61,8 @@ static inline void program_exit(bool val);
 static inline void mainLoop();
 
 #include "windowUi.cpp"
-#include "audioEngine/audio.cpp"
-#include "renderEngine/renderer.cpp"
-#include "inputEngine/input.cpp"
+#include "gameEngine/audioEngine/audio.cpp"
+#include "gameEngine/renderEngine/renderer.cpp"
+#include "gameEngine/inputEngine/input.cpp"
 #include "game.cpp"
 
