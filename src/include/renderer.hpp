@@ -29,7 +29,7 @@ static std::vector<renderObject*> renderObjects;
 struct gameToRenderObject
 {
     Uint32 id;
-    glm::vec4 position;
+    glm::vec3 position;
     glm::vec4 scale;
     glm::vec4 rotation;
     renderObject* renderObj; //render object to use

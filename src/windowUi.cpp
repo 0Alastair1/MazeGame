@@ -67,3 +67,20 @@ static inline void init_ImGui()
     ImGui::StyleColorsDark();
     return;
 }
+
+static inline void render_imgui()
+{
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+    ImGui::NewFrame();
+
+    ImGui::Begin("debug");
+    ImGui::Text("%.3f ms/frame %.1f FPS", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    return;
+}

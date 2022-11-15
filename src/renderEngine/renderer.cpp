@@ -45,6 +45,8 @@ void render()
         previousRenderObjectName = renderObj->name;
     }
 
+    render_imgui();
+
     SDL_GL_SwapWindow(window);
 
     return;
@@ -83,7 +85,7 @@ static inline void performUniformOperation(const gameToRenderObject* gameObject,
         }
 
         //model projection 
-        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), -mainCamera.position);
+        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), gameObject->position);
         glm::mat4 modelRotation;
         glm::mat4 modelScale;
 
