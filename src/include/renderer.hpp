@@ -39,8 +39,14 @@ static std::vector<gameToRenderObject*> gameToRenderObjects;
 
 struct camera
 {
-    glm::vec4 position;
+    glm::vec3 position;
     glm::vec4 rotation;
+
+    camera()
+    {
+        position = glm::vec3(0.0f, 0.0f, 0.0f);
+        rotation = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    }
 } static mainCamera;
 
 static inline void initRenderObjects();
@@ -49,7 +55,7 @@ static inline void make_render_object_type(const Uint8 id, const float* vertexDa
 static inline void genTextures();
 static inline textureObject* getTexture(const char* textureName);
 static inline shaderObject* getShader(const char* shaderName);
-static inline void performUniformOperation(const gameToRenderObject* gameObject);
+static inline void performUniformOperation(const gameToRenderObject* gameObject, const glm::mat4 viewMatrix);
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
 static inline renderObject* getRenderObject(const char* renderObjectName);
 static inline gameToRenderObject* makeGameObject();

@@ -7,6 +7,9 @@ void render()
     std::string previousRenderObjectName = "";
     std::string previousShaderName = "";
 
+    //view matrix - only needs to be ran once per frame
+    glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), -mainCamera.position);
+
     for(gameToRenderObject* gameObject : gameToRenderObjects)
     {
         const renderObject* renderObj = gameObject->renderObj;
@@ -16,7 +19,7 @@ void render()
             glUseProgram(renderObj->shader->shaderID); 
 
         //perform appropriate uniform operations depending on object shader and gameObject properties
-        performUniformOperation(gameObject);
+        performUniformOperation(gameObject, viewMatrix);
 
         if(previousRenderObjectName != renderObj->name)
         {
@@ -47,11 +50,11 @@ void render()
     return;
 }
 
-static inline void performUniformOperation(const gameToRenderObject* gameObject)
+static inline void performUniformOperation(const gameToRenderObject* gameObject, const glm::mat4 viewMatrix)
 {
     const shaderObject* shaderObj = gameObject->renderObj->shader;
     
-    if(!strcmp(shaderObj->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop
+    if(!strcmp(shaderObj->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop maybe not
     {
         //color uniform
         static float r = 0.0;
@@ -63,23 +66,35 @@ static inline void performUniformOperation(const gameToRenderObject* gameObject)
         
         r += increment;
 
-        //projection matrix uniform
-        glm::mat4 projection;
+        //todo put matrix stuff in uniform object
+
+        //projection matrix
+        glm::mat4 projectionMatrix;
     
         if(gameObject->orthoProj)
         {
             const float ratio = windowwidth/windowheight;
             const float scale = 700.0; 
-            projection = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
+            projectionMatrix = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
         }
         else
         {
-            projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1.0f); //fixme
+            projectionMatrix = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1.0f); //fixme
         }
 
+        //model projection 
+        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), -mainCamera.position);
+        glm::mat4 modelRotation;
+        glm::mat4 modelScale;
+
+        glm::mat4 modelProj = modelPosition;
+
+        //mvp - projection * view * model
+        glm::mat4 mvp = projectionMatrix * viewMatrix * modelProj;
+        
         //set uniforms
         //glUniformMatrix3x4fv
-        glUniformMatrix4fv(shaderObj->u_mvpUniformLocation, 1, GL_FALSE, &projection[0][0]);
+        glUniformMatrix4fv(shaderObj->u_mvpUniformLocation, 1, GL_FALSE, &mvp[0][0]);
         glUniform4f(shaderObj->u_colorUniformLocation, r+r/4, r-r/2, r+r/2, r+r/2);
     }
 }
