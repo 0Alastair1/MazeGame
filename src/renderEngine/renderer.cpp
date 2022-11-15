@@ -49,8 +49,11 @@ void render()
 
 static inline void performUniformOperation(const gameToRenderObject* gameObject)
 {
-    if(!strcmp(gameObject->renderObj->shader->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop
+    const shaderObject* shaderObj = gameObject->renderObj->shader;
+    
+    if(!strcmp(shaderObj->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop
     {
+        //color uniform
         static float r = 0.0;
         static float increment = 0.001;
         if(r > 0.75)
@@ -60,8 +63,24 @@ static inline void performUniformOperation(const gameToRenderObject* gameObject)
         
         r += increment;
 
-        const int location = glGetUniformLocation(gameObject->renderObj->shader->shaderID, "u_Color");//cache this fixme
-        glUniform4f(location, r+r/4, r-r/2, r+r/2, r+r/2);
+        //projection matrix uniform
+        glm::mat4 projection;
+    
+        if(gameObject->orthoProj)
+        {
+            const float ratio = windowwidth/windowheight;
+            const float scale = 700.0; 
+            projection = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
+        }
+        else
+        {
+            projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1.0f); //fixme
+        }
+
+        //set uniforms
+        //glUniformMatrix3x4fv
+        glUniformMatrix4fv(shaderObj->u_mvpUniformLocation, 1, GL_FALSE, &projection[0][0]);
+        glUniform4f(shaderObj->u_colorUniformLocation, r+r/4, r-r/2, r+r/2, r+r/2);
     }
 }
 
@@ -93,8 +112,8 @@ static inline void initRenderObjects() //default objects
     const float triangleData[] = {
     -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f,
     0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f,
-    0.5f,  0.3f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,
-    -0.5f,  0.3f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f
+    0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,
+    -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f
     };
     const unsigned int numberofCollums = 8;
     const unsigned int triangleIndecies[] = {
@@ -162,19 +181,19 @@ static inline void setup_default_shaders()
     const char defaultVsSource[] =
     {
         "#version 330 core \n \
-        layout(location = 0) in vec3 vertexPosition_modelspace; \
+        layout(location = 0) in vec3 vertexes; \
         layout(location = 1) in vec3 vColor; \
         layout(location = 2) in vec2 vTexCord; \
         \
         uniform vec4 u_Color; \
+        uniform mat4 mvp; \
         \
         out vec4 fColor;\
         out vec2 texCord; \
         \
         void main()	\
         {	\
-        	gl_Position.xyz = vertexPosition_modelspace;	\
-        	gl_Position.w = 1.0;	\
+        	gl_Position = mvp * vec4(vertexes, 1.0);	\
             fColor = vec4(vColor, 1.0f) + u_Color; \
             texCord = vTexCord; \
             \
@@ -268,6 +287,10 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
     shader->textureUniformLocations[6] = glGetUniformLocation(program, "TextureSlot6");
     shader->textureUniformLocations[7] = glGetUniformLocation(program, "TextureSlot7");
     shader->textureUniformLocations[8] = glGetUniformLocation(program, "TextureSlot8");
+
+    shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");
+    shader->u_mvpUniformLocation = glGetUniformLocation(program, "mvp");
+        
 
     shaderObjects.push_back(shader);
 }

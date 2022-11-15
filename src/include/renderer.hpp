@@ -11,6 +11,8 @@ struct shaderObject
     unsigned int shaderID;
     std::string shaderName;
     Sint32 textureUniformLocations[8];
+    Sint32 u_colorUniformLocation;
+    Sint32 u_mvpUniformLocation;
 };
 static std::vector<shaderObject*> shaderObjects;
 struct renderObject
@@ -31,8 +33,15 @@ struct gameToRenderObject
     glm::vec4 scale;
     glm::vec4 rotation;
     renderObject* renderObj; //render object to use
+    bool orthoProj;
 };
 static std::vector<gameToRenderObject*> gameToRenderObjects;
+
+struct camera
+{
+    glm::vec4 position;
+    glm::vec4 rotation;
+} static mainCamera;
 
 static inline void initRenderObjects();
 static inline void setup_default_shaders();

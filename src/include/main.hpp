@@ -5,7 +5,7 @@
 #include "../../vendor/SDL/include/SDL.h"
 #include "../../vendor/SDL/include/SDL_stdinc.h"
 
-#include "../../vendor/glm/glm/glm.hpp"
+#include "../../vendor/glm/glm/ext.hpp"
 
 #include "../../vendor/glad/include/glad/glad.h"
 #include "../../vendor/glad/src/glad.c"
@@ -51,6 +51,9 @@
 static SDL_Window *window;
 static SDL_GLContext glContext;
 
+int windowwidth;
+int windowheight;
+
 //std::mutex mtx;
 
 static inline void program_exit(bool val);
@@ -59,6 +62,6 @@ static inline void mainLoop();
 #include "windowUi.cpp"
 #include "audioEngine/audio.cpp"
 #include "renderEngine/renderer.cpp"
-#include "input.cpp"
+#include "inputEngine/input.cpp"
 #include "game.cpp"
 

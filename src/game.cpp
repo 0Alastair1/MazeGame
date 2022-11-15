@@ -6,6 +6,7 @@ static inline void initGame()
     gameObject->renderObj = getRenderObject("square");
     gameObject->rotation;
     gameObject->scale;
+    gameObject->orthoProj = true;
 }
 
 

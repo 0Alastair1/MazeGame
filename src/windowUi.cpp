@@ -5,10 +5,11 @@ static inline void initUi()
     init_ImGui();
 }
 
+#define windowHeight 480
+#define windowWidth 480
+
 static inline void init_SDL()
 {
-    #define windowHeight 720
-    #define windowWidth 1080
     #define windowTitle "mazeGame"
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -29,7 +30,7 @@ static inline void init_SDL()
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
-    window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN); //SDL_WINDOW_RESIZABLE
+    window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE); //SDL_WINDOW_RESIZABLE
     if(window == NULL)
     {
         printf("ERROR: %s\n try running from commandline\n", SDL_GetError());
@@ -50,6 +51,8 @@ static inline void init_SDL()
     glViewport(0, 0, windowHeight, windowWidth);
 
     SDL_ShowWindow(window);
+
+    SDL_GetWindowSize(window, &windowwidth, &windowheight);
     
     return;
 }
