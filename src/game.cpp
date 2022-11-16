@@ -1,12 +1,24 @@
 static inline void initGame()
 {
-    gameToRenderObject* gameObject = makeGameObject();
-    gameObject->id = 0;
-    gameObject->position = {0.0f, 0.0f, 0.0f};
-    gameObject->renderObj = getRenderObject("square");
-    gameObject->rotation = {0.0f, 0.0f, 0.0f, 0.0f};
-    gameObject->scale = {1.0f, 1.0f, 1.0f};
+    const float triangleData[] = {
+    -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+    0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+    0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
+    -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
+    };
+    const unsigned int numberofCollums = 8;
+    const unsigned int triangleIndecies[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+    gameToRenderObject* gameObject = new gameToRenderObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png");
+    assignGameObjectToVertexBuffer(gameObject);
+    gameToRenderObjects.push_back(gameObject);
+
     gameObject->orthoProj = true;
+
+
+    gameObject->update();
 
     //mainCamera.position.x += -1.0f;
 }

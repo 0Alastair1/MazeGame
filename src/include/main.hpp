@@ -42,12 +42,14 @@
 #include <cstdlib>
 //#include <mutex>
 #include <unordered_map>
+#include<sstream>
 
 #include "./include/audio.hpp"
 #include "./include/renderer.hpp"
 #include "./include/windowUi.hpp"
 #include "./include/input.hpp"
 #include "./include/game.hpp"
+#include "./include/rendererB.hpp"
 
 static SDL_Window *window;
 static SDL_GLContext glContext;
@@ -63,6 +65,9 @@ static inline void mainLoop();
 #include "windowUi.cpp"
 #include "gameEngine/audioEngine/audio.cpp"
 #include "gameEngine/renderEngine/renderer.cpp"
+#include "gameEngine/renderEngine/shaders.cpp"
+#include "gameEngine/renderEngine/textures.cpp"
+#include "gameEngine/renderEngine/rendererB.cpp"
 #include "gameEngine/inputEngine/input.cpp"
 #include "game.cpp"
 
