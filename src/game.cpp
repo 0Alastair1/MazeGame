@@ -11,11 +11,9 @@ static inline void initGame()
         0, 1, 2,
         0, 2, 3
     };
-    gameToRenderObject* gameObject = new gameToRenderObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png");
+    gameToRenderObject* gameObject = new gameToRenderObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", true);
     assignGameObjectToVertexBuffer(gameObject);
     gameToRenderObjects.push_back(gameObject);
-
-    gameObject->orthoProj = true;
 
 
     gameObject->update();

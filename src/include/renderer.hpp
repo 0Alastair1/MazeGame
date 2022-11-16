@@ -56,13 +56,14 @@ struct gameToRenderObject
         const unsigned int* cindexData,
         Uint32 cverticies,
         Uint32 cindicies,
-        const char* textureName)
+        const char* textureName,
+        bool orthoProject)
     {
         this->id = 0;
         this->position = {0.0f, 0.0f, 0.0f};
         this->scale = { 1.0f, 1.0f, 1.0f};
         this->rotation = {0.0f ,0.0f, 0.0f, 0.0f};
-        this->orthoProj = false;
+        this->orthoProj = orthoProject;
 
         this->viData->verticies = cverticies;
         this->viData->indicies = cindicies;
