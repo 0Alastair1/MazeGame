@@ -35,7 +35,8 @@ void render()
 
         for(size_t i = 0; i < vbs->texturesBinded.size(); i++)
         {
-            glBindTexture(i, vbs->texturesBinded[i]->textureID);
+            glActiveTexture(GL_TEXTURE0 + i); 
+            glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
         }
         /*
         for(size_t i = 0; i < 8; i++)
