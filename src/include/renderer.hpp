@@ -85,14 +85,14 @@ struct gameToRenderObject
         glm::mat4 modelScale;
 
         glm::mat4 modelProj = modelPosition;
-
+        
         for(size_t i =0; i < this->viData->verticies; i+=9)
         {
             glm::vec4 tmpChange = glm::vec4(glm::make_vec3(&this->viData->objectData[i]), 1.0f);
 
             tmpChange = modelProj * tmpChange;
 
-            memset((void*)&this->viData->objectData[i], *glm::value_ptr(tmpChange), sizeof(float) * 3);
+            memcpy((void*)&this->viData->objectData[i], (glm::value_ptr(tmpChange)), sizeof(float) * 3);
         }
     }
 };
