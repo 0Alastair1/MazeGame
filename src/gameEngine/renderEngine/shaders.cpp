@@ -119,7 +119,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
     
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");
-    shader->u_mvpUniformLocation = glGetUniformLocation(program, "mvp");
+    shader->u_mvpUniformLocation = glGetUniformLocation(program, "vp");
 
     //non generic uniforms
     const char* index = vertexSrc;
@@ -133,6 +133,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
         indexSquash = strstr(index, ";");
 
         const char* uniformName = (const char*)malloc(indexSquash - index);
+        memcpy((void*)uniformName, index, indexSquash - index);
         shader->nonGenericUniformlocations[uniformName] = glGetUniformLocation(program, uniformName);
         free((void*)uniformName);
     }

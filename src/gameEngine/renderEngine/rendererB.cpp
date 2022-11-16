@@ -47,6 +47,18 @@ void render()
         glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);
 
+        glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
+
+    glEnableVertexAttribArray(1); //color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 3*sizeof(float) ));
+
+    glEnableVertexAttribArray(2); //texture coods
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 6*sizeof(float) ));
+
+    glEnableVertexAttribArray(3); //texture index
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
 
 
@@ -216,6 +228,6 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     glGenBuffers(1, &vbs->indexbuffer);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
-    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, allIndexindexBufferSizes, dstData, GL_STATIC_DRAW);
 }
