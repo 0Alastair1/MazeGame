@@ -193,6 +193,8 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vertexBufferStruct* vbs = new vertexBufferStruct;
     vertexBuffers.push_back(vbs);
 
+    vbs->bindedGameObjects.push_back(gameObject);
+
     //bind shaders
     gameObject->bindedTextureSlot = 0;
     vbs->texturesBinded.push_back(gameObject->to);
