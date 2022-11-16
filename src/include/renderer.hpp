@@ -86,8 +86,8 @@ struct gameToRenderObject
         glm::mat4 modelScale;
 
         glm::mat4 modelProj = modelPosition;
-        
-        for(size_t i =0; i < this->viData->verticies; i+=9)
+
+        for(size_t i =0; i < ((this->viData->verticies/4)/3)/3; i+=9)
         {
             glm::vec4 tmpChange = glm::vec4(glm::make_vec3(&this->viData->objectData[i]), 1.0f);
 
