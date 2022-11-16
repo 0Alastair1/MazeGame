@@ -70,6 +70,7 @@ struct gameToRenderObject
         this->viData->objectData = (const float*)malloc(this->viData->verticies);
         this->viData->indexData = (const unsigned int*)malloc(this->viData->indicies);
         memcpy((void*)this->viData->objectData, cobjectData, this->viData->verticies);
+        memcpy((void*)this->viData->indexData, cindexData, this->viData->indicies);
 
         to = getTexture(textureName);
 
