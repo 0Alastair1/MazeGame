@@ -216,6 +216,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
 
     vbs->fullVertexDataSize = 1000 * gameObject->viData->verticies;
     vbs->eachVertexSize = gameObject->viData->verticies;
+    vbs->vertexData = (float*)malloc(vbs->fullVertexDataSize);
 
     const Uint32* srcData = gameObject->viData->indexData;
     const Uint32* dstData = vbs->indexData;
