@@ -1,5 +1,5 @@
 
-void render() 
+static inline void render() 
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -10,7 +10,7 @@ void render()
 
     mainCamera.cameraFacingDirVec = glm::normalize(yawPitchDirectionCalc(mainCamera.yaw, mainCamera.pitch));
 
-    glm::mat4 viewMatrix = glm::lookAt(mainCamera.position, mainCamera.position +  mainCamera.cameraFacingDirVec, cameraUp);
+    glm::mat4 viewMatrix = glm::lookAt(mainCamera.position, mainCamera.position +  mainCamera.cameraFacingDirVec, mainCamera.cameraUp);
 
     drawCalls = 0;
     for(vertexBufferStruct* vbs : vertexBuffers)

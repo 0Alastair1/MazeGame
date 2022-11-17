@@ -1,4 +1,5 @@
 static inline void initRender();
+static inline void render();
 
 struct textureObject
 {
