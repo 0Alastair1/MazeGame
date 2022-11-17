@@ -142,7 +142,7 @@ static inline void initRender()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 6*sizeof(float) ));
 
     glEnableVertexAttribArray(3); //texture index
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
 
     return;
 }

@@ -130,7 +130,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         i++;
    }
    if(!found)
-   {
+   {    //make a copy of original object data
         verticesindexesData* vid = new verticesindexesData;
         vid->objectData = (float*)malloc(1000 * sizeof(gameObject->viData->verticies));
         vid->indexData = (unsigned int*)malloc(1000 * sizeof(gameObject->viData->indicies));
@@ -143,7 +143,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         uniqueViData.push_back(gameObject->viData);
    }
 
-    const Uint32 viIndex = i;
+    const Uint32 viIndex1 = i;
 
     //serach available vertex buffers objects to use
 
@@ -151,7 +151,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     std::vector<vertexBufferStruct*> possiblevbs;    
     for(vertexBufferStruct* vbs : vertexBuffers)
     {
-        if(vbs->viIndex == viIndex && vbs->bindedGameObjects.size() < 1000) //replace 1000 with vram size minus a bit? how to get vram size?
+        if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < 1000) //replace 1000 with vram size minus a bit? how to get vram size?
         {
             possiblevbs.push_back(vbs);
         }
@@ -194,6 +194,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vertexBufferStruct* vbs = new vertexBufferStruct;
     vertexBuffers.push_back(vbs);
 
+    vbs->viIndex = viIndex1;
     vbs->bindedGameObjects.push_back(gameObject);
 
     //bind shaders
@@ -226,7 +227,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
 
     for (size_t ii = 0; ii < 1000; ii++)
     {
-        memcpy((void*)(dstData + (ii * indexBufferSize)), srcData, indexBufferSize);
+        memcpy((void*)((char*)dstData + (ii * indexBufferSize)), srcData, indexBufferSize);
     }
     
     glGenBuffers(1, &vbs->indexbuffer);
@@ -234,4 +235,10 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, allIndexindexBufferSizes, dstData, GL_STATIC_DRAW);
+
+    //testing
+    for(size_t ij = 0; ij < vbs->fullNumberOfElements; ij++)
+    {
+        printf("%d ",dstData[ij]);
+    }
 }

@@ -65,6 +65,8 @@ struct gameToRenderObject
         this->rotation = {0.0f ,0.0f, 0.0f, 0.0f};
         this->orthoProj = orthoProject;
 
+        this->viData = new verticesindexesData;
+
         this->viData->verticies = cverticies;
         this->viData->indicies = cindicies;
         this->viData->objectData = (const float*)malloc(this->viData->verticies);

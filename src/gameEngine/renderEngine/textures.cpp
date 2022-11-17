@@ -1,13 +1,11 @@
 static inline void genTextures() //textures are made automaticlly when added into the textures folder
 {
     boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
-    const char* currentDir = currentDirPath.string().c_str();
-    const char* texturesFolder = "/textures/";
-    char* textureDirectory = (char*)malloc(strlen(currentDir) + strlen(texturesFolder));
-    strcpy(textureDirectory,(char*)currentDir);
-    strcat(textureDirectory,(char*)texturesFolder);
+    std::string currentDir = currentDirPath.string();
+    std::string texturesFolder = "/textures/";
+    std::string textureDirectory = currentDir + texturesFolder;
 
-    std::vector<const char*> textureNames;
+    std::vector<std::string> textureNames;
 
     for (const auto & entry : std::filesystem::directory_iterator(textureDirectory))
     {
@@ -16,24 +14,20 @@ static inline void genTextures() //textures are made automaticlly when added int
             continue;
         }
 
-        textureNames.push_back(std::filesystem::path{entry.path()}.filename().string().c_str());
+        textureNames.push_back(std::filesystem::path{entry.path()}.filename().string());
     }
 
     stbi_set_flip_vertically_on_load(1);
 
-    for(const char* textureName : textureNames)
+    for(std::string textureName : textureNames)
     {
         
-        char* filePath = (char*)malloc(strlen(textureDirectory) + strlen(textureName));
-        strcpy(filePath,(char*)textureDirectory);
-        strcat(filePath,(char*)textureName);
-        free(textureDirectory);
+        std::string filePath = textureDirectory + textureName;
 
         int width = 0;
         int height = 0;
         int bpp = 0;
-        unsigned char* buffer = stbi_load(filePath, &width, &height, &bpp, 4);
-        free(filePath);
+        unsigned char* buffer = stbi_load(filePath.c_str(), &width, &height, &bpp, 4);
 
         unsigned int textureID = 0;
 
