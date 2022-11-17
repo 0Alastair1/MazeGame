@@ -241,11 +241,12 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, allIndexindexBufferSizes, dstData, GL_STATIC_DRAW);
 
+    /*
     //testing
     for(size_t ij = 0; ij < vbs->fullNumberOfElements; ij++)
     {
         printf("%d ",dstData[ij]);
-    }
+    }*/
 }
 
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch)

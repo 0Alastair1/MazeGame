@@ -17,9 +17,8 @@ static inline void initGame()
 
     gameObject->update();
 
-    SDL_WarpMouseInWindow(window, windowwidth / 2, windowheight / 2);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-	SDL_ShowCursor(SDL_FALSE);
+    fpsMouse(true);
+
 }
 
 
@@ -45,5 +44,12 @@ static inline void gameLoop()
     {
         mainCamera.position += speed * cameraFacingDirVecC * deltaTime;
     }
-
+    if(getKey(ESC) || getKey(HT))
+    {
+        fpsMouse(false);
+    }
+    if(getMouseKey(false))
+    {
+        fpsMouse(true);
+    }
 }
