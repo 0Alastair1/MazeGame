@@ -133,10 +133,19 @@ struct camera
     glm::vec3 position;
     glm::vec4 rotation;
     glm::mat4 orthoProjectionMatrix;
+    glm::mat4 perspectiveProjectionMatrix;
+
+    float pitch;
+    float yaw;
+    float roll;//dont include in vector calculations
+
+    glm::vec3 cameraFacingDirVec = glm::vec3(0.0f, 0.0f, -1.0f);
+    const glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f,  0.0f);
+
     camera()
     {
-        position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rotation = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        position = glm::vec3(0.0f, 0.0f, 3.0f);
+        yaw = -90.0f;
     }
 } static mainCamera;
 
@@ -152,4 +161,5 @@ struct gpuStruct
 static inline void setup_default_shaders();
 static inline void genTextures();
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
-static inline gameToRenderObject* makeGameObject();
+static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject);
+static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);

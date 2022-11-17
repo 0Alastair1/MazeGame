@@ -17,6 +17,10 @@ static inline void mainLoop()
 {
     while(true)
     {
+        const Uint64 currentFrame = SDL_GetPerformanceCounter();
+        deltaTime = (double)((currentFrame - prevFrame)*1000 / (double)SDL_GetPerformanceFrequency() );
+        prevFrame = currentFrame;
+
         gameLoop();
         updateInput();
         render();

@@ -147,6 +147,14 @@ static inline void initRender()
     return;
 }
 
+static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject)
+{
+    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureName, orthoProject);
+    assignGameObjectToVertexBuffer(gameObject);
+    gameToRenderObjects.push_back(gameObject);
+    return gameObject;
+}
+
 /*
 static inline void deleteGameObject(gameToRenderObject* gameObject) //fixme delete all references to that object from everhthing else
 {

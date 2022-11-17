@@ -1,3 +1,4 @@
+
 static inline void initGame()
 {
     const float triangleData[] = {
@@ -11,18 +12,38 @@ static inline void initGame()
         0, 1, 2,
         0, 2, 3
     };
-    gameToRenderObject* gameObject = new gameToRenderObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", true);
-    assignGameObjectToVertexBuffer(gameObject);
-    gameToRenderObjects.push_back(gameObject);
-
+    gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
+    glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
 
     gameObject->update();
 
-    //mainCamera.position.x += -1.0f;
+    SDL_WarpMouseInWindow(window, windowwidth / 2, windowheight / 2);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_ShowCursor(SDL_FALSE);
 }
 
 
 static inline void gameLoop()
 {
+    const float speed = 0.01f;
+    const glm::vec3 cameraFacingDirVecC = mainCamera.cameraFacingDirVec;
+    const glm::vec3 cameraUpC = mainCamera.cameraUp;
+
+    if(getKey('a') || getKey('A'))
+    {
+        mainCamera.position -= glm::normalize(glm::cross(cameraFacingDirVecC, cameraUpC)) * speed * deltaTime;
+    }
+    if(getKey('d') || getKey('D'))
+    {
+        mainCamera.position += glm::normalize(glm::cross(cameraFacingDirVecC, cameraUpC)) * speed * deltaTime;
+    }
+    if(getKey('s') || getKey('S'))
+    {
+        mainCamera.position -= speed * cameraFacingDirVecC * deltaTime;
+    }
+    if(getKey('w') || getKey('W'))
+    {
+        mainCamera.position += speed * cameraFacingDirVecC * deltaTime;
+    }
 
 }

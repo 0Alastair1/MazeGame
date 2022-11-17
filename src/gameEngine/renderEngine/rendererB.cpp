@@ -1,20 +1,25 @@
+
 void render() 
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //view matrix - only needs to be ran once per frame
-    glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), -mainCamera.position);
+    mainCamera.perspectiveProjectionMatrix = glm::perspective(45.0f, (float)windowwidth / (float)windowheight, 0.1f, 100.0f);
 
     //projection matrix
-    glm::mat4 perspectiveProjectionMatrix = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1.0f); //fixme
 
+    mainCamera.cameraFacingDirVec = glm::normalize(yawPitchDirectionCalc(mainCamera.yaw, mainCamera.pitch));
+
+    glm::mat4 viewMatrix = glm::lookAt(mainCamera.position, mainCamera.position +  mainCamera.cameraFacingDirVec, cameraUp);
+
+    drawCalls = 0;
     for(vertexBufferStruct* vbs : vertexBuffers)
     {
         //bind shader - to do optimize
         glUseProgram(vbs->shader->shaderID);
 
 
-        performUniformOperation(vbs, viewMatrix, perspectiveProjectionMatrix);
+        performUniformOperation(vbs, viewMatrix);
 
         size_t gameObjectIndex = 0;
         const float* vertexDest =  vbs->vertexData;
@@ -49,21 +54,21 @@ void render()
         glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);
 
         glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
 
-    glEnableVertexAttribArray(1); //color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 3*sizeof(float) ));
+        glEnableVertexAttribArray(1); //color
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 3*sizeof(float) ));
 
-    glEnableVertexAttribArray(2); //texture coods
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 6*sizeof(float) ));
+        glEnableVertexAttribArray(2); //texture coods
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 6*sizeof(float) ));
 
-    glEnableVertexAttribArray(3); //texture index
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
+        glEnableVertexAttribArray(3); //texture index
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
 
 
-
+        drawCalls++;
         glDrawElements(GL_TRIANGLES, vbs->fullNumberOfElements, GL_UNSIGNED_INT, nullptr);
     }
 
@@ -72,7 +77,7 @@ void render()
     SDL_GL_SwapWindow(window);
 }
 
-static inline void performUniformOperation(const vertexBufferStruct* vbs, const glm::mat4 viewMatrix, const glm::mat4 perspectiveProjectionMatrix)
+static inline void performUniformOperation(const vertexBufferStruct* vbs, const glm::mat4 viewMatrix)
 {
     
     if(!strcmp(vbs->shader->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop maybe not
@@ -95,7 +100,7 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         if(vbs->orthoProj)
             projectionMatrix = mainCamera.orthoProjectionMatrix; //todo translate by camera rotation
         else
-            projectionMatrix = perspectiveProjectionMatrix;
+            projectionMatrix = mainCamera.perspectiveProjectionMatrix;
         
 
         //mvp - projection * view * model
@@ -241,4 +246,10 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     {
         printf("%d ",dstData[ij]);
     }
+}
+
+static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch)
+{
+    const glm::vec3 direction (cos(glm::radians(yaw)) * cos(glm::radians(pitch)), sin(glm::radians(pitch)),sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
+    return direction;
 }

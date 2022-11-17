@@ -62,6 +62,9 @@ int windowheight;
 static inline void program_exit(bool val);
 static inline void mainLoop();
 
+Uint64 prevFrame = 0;
+float deltaTime = 0;
+
 #include "windowUi.cpp"
 #include "gameEngine/audioEngine/audio.cpp"
 #include "gameEngine/renderEngine/renderer.cpp"

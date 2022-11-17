@@ -67,7 +67,7 @@ static inline void init_ImGui()
     ImGui::StyleColorsDark();
     return;
 }
-
+static Uint32 drawCalls;
 static inline void render_imgui()
 {
 
@@ -77,6 +77,7 @@ static inline void render_imgui()
 
     ImGui::Begin("debug");
     ImGui::Text("%.3f ms/frame %.1f FPS", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::Text("%d draw calls", drawCalls);
     ImGui::End();
 
     ImGui::Render();
