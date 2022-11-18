@@ -2,10 +2,6 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #define STB_IMAGE_IMPLEMENTATION
 
-#if _MSC_VER < 1900
-#  define snprintf _snprintf
-#endif
-
 #include "../../vendor/SDL/include/SDL.h"
 #include "../../vendor/SDL/include/SDL_stdinc.h"
 
