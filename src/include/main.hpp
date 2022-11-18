@@ -21,7 +21,9 @@
 #include "../../vendor/imgui/imgui_widgets.cpp"
 #include "../../vendor/imgui/backends/imgui_impl_opengl3.cpp"
 
+#ifndef __GNUC__
 #undef vsnprintf _vsnprintf
+#endif
 #include "../../vendor/boost/libs/dll/include/boost/dll/runtime_symbol_info.hpp"
 
 #include "../../vendor/portaudio/include/portaudio.h"
