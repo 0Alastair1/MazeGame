@@ -31,7 +31,9 @@ static inline void render()
                 continue;
             
             memcpy((void*)(vertexDest + (gameObjectIndex * (eachVertexSize/sizeof(float)))), gameObject->viData->objectData, eachVertexSize);
-            memcpy((void*)(vertexDest + ((gameObjectIndex+1 * (eachVertexSize/sizeof(float)))) - 1), &gameObject->bindedTextureSlot, sizeof(float));
+
+            float test  = gameObject->bindedTextureSlot;
+            memcpy((void*)(vertexDest + ((gameObjectIndex+1 * (eachVertexSize/sizeof(float)))) - 1), &test, sizeof(float));
             //for(size_t i = 0; i < eachVertexSize; i++) this doesnt need to be here
 
             gameObjectIndex++;
