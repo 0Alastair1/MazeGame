@@ -8,12 +8,7 @@ static inline void genTextures() //textures are made automaticlly when added int
 
     for (int i = currentDir.size() - 1; i >= 0; i--) {
 
-        if(currentDir[i] == '\\')
-        {
-            slashes = currentDir[i] + currentDir[i];
-            break;
-        }
-        if(currentDir[i] == '/')
+        if(currentDir[i] == '\\' || currentDir[i] == '/')
         {
             slashes = currentDir[i];
             break;
