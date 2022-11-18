@@ -30,10 +30,37 @@ static inline void render()
             if(gameObject->verticiesChanged == false)
                 continue;
             
-            memcpy((void*)(vertexDest + (gameObjectIndex * eachVertexSize)), gameObject->viData->objectData, eachVertexSize);
-            memset((void*)(vertexDest + ((gameObjectIndex+1 * eachVertexSize)) - sizeof(float)), (float)gameObject->bindedTextureSlot, sizeof(float));
+            memcpy((void*)(vertexDest + (gameObjectIndex * (eachVertexSize/sizeof(float)))), gameObject->viData->objectData, eachVertexSize);
+            //memcpy((void*)(vertexDest + ((gameObjectIndex+1 * (eachVertexSize/sizeof(float)))) - sizeof(float)), (const void*)&gameObject->bindedTextureSlot, sizeof(float));
+            //for(size_t i = 0; i < eachVertexSize; i++) this doesnt need to be here
 
             gameObjectIndex++;
+
+
+            //testing
+            /*
+            printf("\n\n");
+            printf("object %d ", gameObjectIndex);
+            printf("\n\n");
+            for(size_t i = 0; i < eachVertexSize / sizeof(float); i++)
+            {
+                if(i % 9 == 0)
+                {
+                    printf("\n");
+                }
+                printf("%f , ", gameObject->viData->objectData[i]);
+            }*/
+        }
+        printf("\n");
+        printf("vbs data:         ");
+        printf("\n");
+        for(size_t i = 0; i < vbs->bindedGameObjects.size() * eachVertexSize/ sizeof(float); i++)
+        {
+            if(i % 9 == 0)
+            {
+                printf("\n");
+            }
+            printf("%f , ", vertexDest[i]);
         }
 
         //bind textures - todo optimize this
@@ -51,7 +78,7 @@ static inline void render()
 
         //bind the buffers
         glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);//suppose to be vbs->bindedGameObjects.size() * eachVertexSize??
 
         glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );

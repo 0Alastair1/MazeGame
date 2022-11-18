@@ -114,7 +114,6 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 
         shader->textureUniformLocations[i] = glGetUniformLocation(program, textureSlotFullName.c_str()); //todo make this func a std::String
     }
-    
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");
     shader->u_mvpUniformLocation = glGetUniformLocation(program, "vp");

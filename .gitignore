@@ -34,3 +34,5 @@
 .cache
 build
 .vscode
+CMakeFiles
+CMakeCache.txt

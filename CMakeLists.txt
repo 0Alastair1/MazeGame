@@ -55,7 +55,7 @@ include_directories(mazeGame PUBLIC src/include src/
 target_link_libraries(mazeGame PRIVATE SDL2-static)
 target_link_libraries(mazeGame PRIVATE PortAudio)
 target_link_libraries(mazeGame PRIVATE samplerate)
-target_link_libraries(mazeGame PRIVATE Boost::filesystem Boost::system)
+target_link_libraries(mazeGame PUBLIC Boost::filesystem Boost::system Boost::exception boost_exception Boost::throw_exception)
 #target_link_libraries(mazeGame PRIVATE ${OPENGL_gl_LIBRARY})
 
 #add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) 
@@ -104,10 +104,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wsuggest-override")
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wsuggest-final-types")
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wsuggest-final-methods")
-
-    #remove this when vendor fixes this warning
-    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wno-deprecated")
-    set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
 
     #set release flags
     SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")

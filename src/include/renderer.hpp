@@ -61,7 +61,7 @@ struct gameToRenderObject
         bool orthoProject)
     {
         this->id = 0;
-        this->position = {0.0f, 0.0f, 0.0f};
+        this->position = glm::vec3(0.0f, 0.0f, 0.0f);
         this->scale = { 1.0f, 1.0f, 1.0f};
         this->rotation = {0.0f ,0.0f, 0.0f, 0.0f};
         this->orthoProj = orthoProject;
@@ -91,13 +91,13 @@ struct gameToRenderObject
 
         glm::mat4 modelProj = modelPosition;
 
-        for(size_t i =0; i < ((this->viData->verticies/4)/3)/3; i+=9)
+        for(size_t i =0; i < ((this->viData->verticies/4)/3)/3; i++)
         {
-            glm::vec4 tmpChange = glm::vec4(glm::make_vec3(&this->viData->objectData[i]), 1.0f);
+            glm::vec4 tmpChange = glm::vec4(glm::make_vec3(&this->viData->objectData[i * 9]), 1.0f);
 
             tmpChange = modelProj * tmpChange;
 
-            memcpy((void*)&this->viData->objectData[i], (glm::value_ptr(tmpChange)), sizeof(float) * 3);
+            memcpy((void*)&this->viData->objectData[i * 9], (glm::value_ptr(tmpChange)), sizeof(float) * 3);
         }
     }
 };

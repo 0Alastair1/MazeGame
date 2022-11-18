@@ -80,7 +80,7 @@ static inline void updateInput()
     }
 }
 
-static bool keys[255];
+static bool keys[300];
 
 static inline void updateKeyboardKey(SDL_KeyboardEvent *key, bool press)
 {
