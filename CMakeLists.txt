@@ -70,7 +70,7 @@ add_custom_command(
                 ${CMAKE_SOURCE_DIR}/res/textures/
                 ${CMAKE_CURRENT_BINARY_DIR}/textures)
 
-add_custom_command(TARGET mazeGame PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/textures/ $<TARGET_FILE_DIR:mazeGame>)
+add_custom_command(TARGET mazeGame PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/textures/ $<TARGET_FILE_DIR:mazeGame>/textures/)
 
 #sets compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
