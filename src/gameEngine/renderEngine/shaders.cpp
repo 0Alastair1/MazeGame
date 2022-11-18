@@ -109,12 +109,10 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
         const char* textureSlotName = "TextureSlot";
         std::stringstream ss;
         ss << i;
-        const char* slotNumber = ss.str().c_str();
-        char* textureSlotFullName = (char*)malloc(strlen(textureSlotName) + strlen(slotNumber));
-        strcpy(textureSlotFullName, textureSlotName);
-        strcat(textureSlotFullName, slotNumber);
-        shader->textureUniformLocations[i] = glGetUniformLocation(program, textureSlotFullName);
-        free(textureSlotFullName);
+        std::string slotNumber = ss.str().c_str();
+        std::string textureSlotFullName = textureSlotName + slotNumber;
+
+        shader->textureUniformLocations[i] = glGetUniformLocation(program, textureSlotFullName.c_str()); //todo make this func a std::String
     }
     
 
