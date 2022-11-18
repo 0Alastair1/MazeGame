@@ -63,9 +63,15 @@ target_link_libraries(mazeGame PRIVATE Boost::filesystem Boost::system)
 #set(CMAKE_BUILD_TYPE Release)
 
 target_compile_features(mazeGame PUBLIC cxx_std_17)
-
+ 
+add_custom_command(
+        TARGET mazeGame POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/res/textures/
+                ${CMAKE_CURRENT_BINARY_DIR}/textures)
 
 add_custom_command(TARGET mazeGame PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/textures/ $<TARGET_FILE_DIR:mazeGame>)
+
 #sets compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     
