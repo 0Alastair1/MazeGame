@@ -1,22 +1,42 @@
 
 static inline void initGame()
 {
-    const float triangleData[] = {
-    -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
-    0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
-    0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
-    -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
-    };
-    const unsigned int numberofCollums = 8;
-    const unsigned int triangleIndecies[] = {
-        0, 1, 2,
-        0, 2, 3
-    };
-    gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
-    glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
-
-    gameObject->update();
-
+    {
+        const float triangleData[] = {
+        -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+        0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+        0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
+        -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
+        };
+        const unsigned int numberofCollums = 8;
+        const unsigned int triangleIndecies[] = {
+            0, 1, 2,
+            0, 2, 3
+        };
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
+        glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
+        gameObject->position = glm::vec3(0.0, 0.0, 0.0);
+        gameObject->update();
+    }
+    //
+     {
+        const float triangleData[] = {
+        -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+        0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+        0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
+        -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
+        };
+        const unsigned int numberofCollums = 8;
+        const unsigned int triangleIndecies[] = {
+            0, 1, 2,
+            0, 2, 3
+        };
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
+        glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
+        gameObject->position = glm::vec3(1.0, 1.0, 1.0);
+        gameObject->update();
+    }
+    
     fpsMouse(true);
 
 }

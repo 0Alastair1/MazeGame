@@ -32,31 +32,6 @@ static inline void render()
             memcpy((void*)(vertexDest + (gameObjectIndex * (eachVertexSize/sizeof(float)))), gameObject->viData->objectData, eachVertexSize);
 
             gameObjectIndex++;
-
-            //testing
-            /*
-            printf("\n\n");
-            printf("object %d ", gameObjectIndex);
-            printf("\n\n");
-            for(size_t i = 0; i < eachVertexSize / sizeof(float); i++)
-            {
-                if(i % 9 == 0)
-                {
-                    printf("\n");
-                }
-                printf("%f , ", gameObject->viData->objectData[i]);
-            }*/
-        }
-        printf("\n");
-        printf("vbs data:         ");
-        printf("\n");
-        for(size_t i = 0; i < vbs->bindedGameObjects.size() * eachVertexSize/ sizeof(float); i++)
-        {
-            if(i % 9 == 0)
-            {
-                printf("\n");
-            }
-            printf("%f , ", vertexDest[i]);
         }
 
         //bind textures - todo optimize this
@@ -66,15 +41,11 @@ static inline void render()
             glActiveTexture(GL_TEXTURE0 + i); 
             glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
         }
-        /*
-        for(size_t i = 0; i < 8; i++)
-        {
-            glBindTexture(i, vbs->texturesBinded[i]->textureID);
-        }*/
 
         //bind the buffers
         glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);//suppose to be vbs->bindedGameObjects.size() * eachVertexSize??
+        //glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);//suppose to be vbs->bindedGameObjects.size() * eachVertexSize??
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->bindedGameObjects.size() * eachVertexSize, vertexDest);
 
         //the 0 corrasponds to the layout value in the shader
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
@@ -250,12 +221,20 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vbs->eachVertexSize = gameObject->viData->verticies;
     vbs->vertexData = (float*)malloc(vbs->fullVertexDataSize);
 
-    const Uint32* srcData = gameObject->viData->indexData;
+    Uint32* srcData = (Uint32*)malloc(indexBufferSize);
+    memcpy((void*)srcData, gameObject->viData->indexData, indexBufferSize);
+
     const Uint32* dstData = vbs->indexData;
 
     for (size_t ii = 0; ii < 1000; ii++)
     {
-        memcpy((void*)((char*)dstData + (ii * indexBufferSize)), srcData, indexBufferSize);
+        memcpy((void*)((char*)dstData + (ii * indexBufferSize)), srcData, indexBufferSize);//remove char* conversion
+        
+        //increment the index data  
+        for(size_t iii = 0; iii < indexBufferSize/sizeof(unsigned int); iii++)
+        {
+            srcData[iii] += (vbs->eachVertexSize/sizeof(float))/9;
+        }
     }
     
     glGenBuffers(1, &vbs->indexbuffer);
@@ -263,13 +242,6 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, allIndexindexBufferSizes, dstData, GL_STATIC_DRAW);
-
-    /*
-    //testing
-    for(size_t ij = 0; ij < vbs->fullNumberOfElements; ij++)
-    {
-        printf("%d ",dstData[ij]);
-    }*/
 }
 
 static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject) //texture index of the vbs - todo make changing textures not in vbs

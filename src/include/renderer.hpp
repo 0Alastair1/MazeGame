@@ -114,7 +114,7 @@ struct vertexBufferStruct
     bool orthoProj;
 
     //opengl vertex buffer and index buffer
-    unsigned int vertexbuffer;
+    unsigned int vertexbuffer;//change this to Uint32
     unsigned int indexbuffer;
 
     //copy of the data to send to opengl
