@@ -18,7 +18,6 @@ static inline void render()
         //bind shader - to do optimize
         glUseProgram(vbs->shader->shaderID);
 
-
         performUniformOperation(vbs, viewMatrix);
 
         size_t gameObjectIndex = 0;
@@ -32,12 +31,7 @@ static inline void render()
             
             memcpy((void*)(vertexDest + (gameObjectIndex * (eachVertexSize/sizeof(float)))), gameObject->viData->objectData, eachVertexSize);
 
-            float test  = gameObject->bindedTextureSlot;
-            memcpy((void*)(vertexDest + ((gameObjectIndex+1 * (eachVertexSize/sizeof(float)))) - 1), &test, sizeof(float));
-            //for(size_t i = 0; i < eachVertexSize; i++) this doesnt need to be here
-
             gameObjectIndex++;
-
 
             //testing
             /*
@@ -82,16 +76,16 @@ static inline void render()
         glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vbs->fullVertexDataSize, vertexDest);//suppose to be vbs->bindedGameObjects.size() * eachVertexSize??
 
-        glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
+        //the 0 corrasponds to the layout value in the shader
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
 
-        glEnableVertexAttribArray(1); //color
+       //color
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 3*sizeof(float) ));
 
-        glEnableVertexAttribArray(2); //texture coods
+        //texture coods
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 6*sizeof(float) ));
 
-        glEnableVertexAttribArray(3); //texture index
+        //texture index
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
@@ -201,7 +195,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
             if(to == gameObject->to)
             {
                 //same vi type, not at binded objects limit, and got binded texture already
-                gameObject->bindedTextureSlot = textureIndex;
+                updateTextureBinding(textureIndex, gameObject);
                 vbs->bindedGameObjects.push_back(gameObject);
                 return;
             }
@@ -215,7 +209,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         if(vbs->texturesBinded.size() < 8) //todo set to device max texture bind later.
         {
             //bind texture
-            gameObject->bindedTextureSlot = vbs->texturesBinded.size();
+            updateTextureBinding(vbs->texturesBinded.size(), gameObject);
             vbs->texturesBinded.push_back(gameObject->to); //todo at some point make able to bind multiple textures per object
 
             vbs->bindedGameObjects.push_back(gameObject);
@@ -232,8 +226,8 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vbs->bindedGameObjects.push_back(gameObject);
 
     //bind shaders
-    gameObject->bindedTextureSlot = 0;
     vbs->texturesBinded.push_back(gameObject->to);
+    updateTextureBinding(0, gameObject);
 
     //vertex buffer object
     glGenBuffers(1, &vbs->vertexbuffer);
@@ -276,6 +270,17 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     {
         printf("%d ",dstData[ij]);
     }*/
+}
+
+static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject) //texture index of the vbs - todo make changing textures not in vbs
+{
+    gameObject->bindedTextureSlot = textureIndex;
+    const float texureIndexFloat = textureIndex;
+
+    for(size_t i =0; i < ((gameObject->viData->verticies/4)/3)/3; i++)
+    {
+        memcpy((void*)&gameObject->viData->objectData[(i * 9) + 8], &texureIndexFloat, sizeof(float));
+    }
 }
 
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch)

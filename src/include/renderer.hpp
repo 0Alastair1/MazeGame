@@ -164,3 +164,4 @@ static inline void genTextures();
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
 static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject);
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);
+static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject) ;
