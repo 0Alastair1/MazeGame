@@ -4,7 +4,7 @@ static inline void render();
 struct textureObject
 {
     std::string textureName;
-    unsigned int textureID;
+    Uint32 textureID;
 };
 static std::vector<textureObject*> textureObjects;
 

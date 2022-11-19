@@ -1,5 +1,5 @@
 static Sint32 prevShader = -1;
-
+static Uint32 texturesBindedprev[32];
 
 static inline void render() 
 {
@@ -45,8 +45,12 @@ static inline void render()
 
         for(size_t i = 0; i < vbs->texturesBinded.size(); i++)
         {
-            glActiveTexture(GL_TEXTURE0 + i); 
-            glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+            if(texturesBindedprev[i] != vbs->texturesBinded[i]->textureID)
+            {            
+                glActiveTexture(GL_TEXTURE0 + i); 
+                glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                texturesBindedprev[i] = vbs->texturesBinded[i]->textureID;
+            }
         }
 
         //bind the buffers
