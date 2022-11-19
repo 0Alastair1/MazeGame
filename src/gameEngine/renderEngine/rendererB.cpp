@@ -1,5 +1,6 @@
 static Sint32 prevShader = -1;
 static Uint32 texturesBindedprev[32];
+static const Uint32 numObjectsVerVertex = 10000;
 
 static inline void render() 
 {
@@ -88,7 +89,7 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
     if(!strcmp(vbs->shader->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop maybe not
     {
         //color uniform
-        static float r = 0.0;
+        static float r = 0.5;
         static float increment = 0.001;
         if(r > 0.75)
             increment = -0.001;
@@ -142,8 +143,8 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
    if(!found)
    {    //make a copy of original object data
         verticesindexesData* vid = new verticesindexesData;
-        vid->objectData = (float*)malloc(1000 * sizeof(gameObject->viData->verticies));
-        vid->indexData = (unsigned int*)malloc(1000 * sizeof(gameObject->viData->indicies));
+        vid->objectData = (float*)malloc(gameObject->viData->verticies);
+        vid->indexData = (unsigned int*)malloc(gameObject->viData->indicies);
         vid->verticies = gameObject->viData->verticies;
         vid->indicies = gameObject->viData->indicies;
 
@@ -161,7 +162,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     std::vector<vertexBufferStruct*> possiblevbs;    
     for(vertexBufferStruct* vbs : vertexBuffers)
     {
-        if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < 1000) //replace 1000 with vram size minus a bit? how to get vram size?
+        if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < numObjectsVerVertex) //replace numObjectsVerVertex with vram size minus a bit? how to get vram size?
         {
             possiblevbs.push_back(vbs);
         }
@@ -214,13 +215,13 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     //vertex buffer object
     glGenBuffers(1, &vbs->vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, 1000 * gameObject->viData->verticies, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numObjectsVerVertex * gameObject->viData->verticies, nullptr, GL_DYNAMIC_DRAW);
 
 
     //index buffer object - autogen for future use
 
     const Uint32 indexBufferSize = gameObject->viData->indicies;
-    const Uint32 allIndexindexBufferSizes = 1000 * indexBufferSize;
+    const Uint32 allIndexindexBufferSizes = numObjectsVerVertex * indexBufferSize;
 
     vbs->fullIndexDataSize = allIndexindexBufferSizes;
     vbs->indexData = (Uint32*)malloc(allIndexindexBufferSizes);
@@ -228,7 +229,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     //vbs->shader = gameObject-> fix shader per object
     vbs->orthoProj = gameObject->orthoProj;
 
-    vbs->fullVertexDataSize = 1000 * gameObject->viData->verticies;
+    vbs->fullVertexDataSize = numObjectsVerVertex * gameObject->viData->verticies;
     vbs->eachVertexSize = gameObject->viData->verticies;
     vbs->vertexData = (float*)malloc(vbs->fullVertexDataSize);
 
@@ -237,7 +238,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
 
     const Uint32* dstData = vbs->indexData;
 
-    for (size_t ii = 0; ii < 1000; ii++)
+    for (size_t ii = 0; ii < numObjectsVerVertex; ii++)
     {
         memcpy((void*)((char*)dstData + (ii * indexBufferSize)), srcData, indexBufferSize);//remove char* conversion
         
