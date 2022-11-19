@@ -80,11 +80,14 @@ static inline void updateInput()
     }
 }
 
-static bool keys[300];
+static bool keys[256];
 
 static inline void updateKeyboardKey(SDL_KeyboardEvent *key, bool press)
 {
-    // std::cout << (char)key->keysym.sym << std::endl;
+    if(key->keysym.sym >= 256)
+    {
+        return;
+    }
     keys[key->keysym.sym] = press;
 }
 

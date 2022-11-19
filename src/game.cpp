@@ -21,8 +21,7 @@ static inline void initGame()
         float v2 = (rand() % (int)amount + 1)/3; 
         float v3 = (rand() % (int)amount + 1)/3; 
         float v4 = (rand() % (int)amount + 1)/3; 
-        gameObject->position = glm::vec3((float)v2-amount/4, (float)v3-amount/4, (float)v4-amount/2);
-        gameObject->update();
+        gameObject->changePos(v2-amount/4, v3-amount/4, v4-amount/2);
     }
 
     

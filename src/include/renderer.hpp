@@ -11,7 +11,7 @@ static std::vector<textureObject*> textureObjects;
 static inline textureObject* getTexture(const char* textureName);
 struct shaderObject
 {
-    unsigned int shaderID;
+    Sint32 shaderID;
     std::string shaderName;
     Sint32 textureUniformLocations[32];
     Sint32 u_colorUniformLocation;
@@ -99,6 +99,12 @@ struct gameToRenderObject
 
             memcpy((void*)&this->viData->objectData[i * 9], (glm::value_ptr(tmpChange)), sizeof(float) * 3);
         }
+    }
+    void changePos(float x, float y, float z)
+    {
+        this->position = glm::vec3(x, y, z);
+        this->update();
+        this->verticiesChanged = true;
     }
 };
 

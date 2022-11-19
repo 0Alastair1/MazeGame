@@ -1,3 +1,5 @@
+static Sint32 prevShader = -1;
+
 
 static inline void render() 
 {
@@ -16,7 +18,11 @@ static inline void render()
     for(vertexBufferStruct* vbs : vertexBuffers)
     {
         //bind shader - to do optimize
-        glUseProgram(vbs->shader->shaderID);
+        if(vbs->shader->shaderID != prevShader)
+        {
+            glUseProgram(vbs->shader->shaderID);
+            prevShader = vbs->shader->shaderID;
+        }
 
         performUniformOperation(vbs, viewMatrix);
 
@@ -29,6 +35,7 @@ static inline void render()
             if(gameObject->verticiesChanged == false)
                 continue;
             
+            gameObject->verticiesChanged = false;
             memcpy((void*)(vertexDest + (gameObjectIndex * (eachVertexSize/sizeof(float)))), gameObject->viData->objectData, eachVertexSize);
 
             gameObjectIndex++;
