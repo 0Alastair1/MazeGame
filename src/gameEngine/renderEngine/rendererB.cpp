@@ -4,7 +4,7 @@ static inline void render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //view matrix - only needs to be ran once per frame
-    mainCamera.perspectiveProjectionMatrix = glm::perspective(45.0f, (float)windowwidth / (float)windowheight, 0.1f, 100.0f);
+    mainCamera.perspectiveProjectionMatrix = glm::perspective(45.0f, (float)windowwidth / (float)windowheight, 0.1f, 10000.0f); //remove this
 
     //projection matrix
 
@@ -136,10 +136,10 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         vid->verticies = gameObject->viData->verticies;
         vid->indicies = gameObject->viData->indicies;
 
-        memcpy((void*)vid->objectData, gameObject->viData->objectData, sizeof(gameObject->viData->verticies));
-        memcpy((void*)vid->indexData, gameObject->viData->indexData, sizeof(gameObject->viData->indicies));
+        memcpy((void*)vid->objectData, gameObject->viData->objectData,gameObject->viData->verticies);
+        memcpy((void*)vid->indexData, gameObject->viData->indexData, gameObject->viData->indicies);
 
-        uniqueViData.push_back(gameObject->viData);
+        uniqueViData.push_back(vid);
    }
 
     const Uint32 viIndex1 = i;
@@ -237,6 +237,8 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         }
     }
     
+    free(srcData);
+
     glGenBuffers(1, &vbs->indexbuffer);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);

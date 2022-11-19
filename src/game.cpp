@@ -1,6 +1,7 @@
 
 static inline void initGame()
 {
+    for(size_t i = 0; i < 1'000'000; i++)
     {
         const float triangleData[] = {
         -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
@@ -15,27 +16,15 @@ static inline void initGame()
         };
         gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
         glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
-        gameObject->position = glm::vec3(0.0, 0.0, 0.0);
+        
+        const float amount = 1000;
+        float v2 = (rand() % (int)amount + 1)/3; 
+        float v3 = (rand() % (int)amount + 1)/3; 
+        float v4 = (rand() % (int)amount + 1)/3; 
+        gameObject->position = glm::vec3((float)v2-amount/4, (float)v3-amount/4, (float)v4-amount/2);
         gameObject->update();
     }
-    //
-     {
-        const float triangleData[] = {
-        -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
-        0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
-        0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
-        -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
-        };
-        const unsigned int numberofCollums = 8;
-        const unsigned int triangleIndecies[] = {
-            0, 1, 2,
-            0, 2, 3
-        };
-        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
-        glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
-        gameObject->position = glm::vec3(1.0, 1.0, 1.0);
-        gameObject->update();
-    }
+
     
     fpsMouse(true);
 
