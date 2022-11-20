@@ -147,10 +147,12 @@ static inline void initRender()
     return;
 }
 
-static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject)
+static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject, bool batch)
 {
     gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureName, orthoProject);
-    assignGameObjectToVertexBuffer(gameObject);
+    assignGameObjectToVertexBuffer(gameObject, batch);
+
+
     gameToRenderObjects.push_back(gameObject);
     return gameObject;
 }

@@ -14,7 +14,7 @@ static inline void initGame()
             0, 1, 2,
             0, 2, 3
         };
-        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false, true);
         glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
 
         mainCamera.position.x = -20.0f;
@@ -24,6 +24,7 @@ static inline void initGame()
         float v3 = (rand() % (int)amount + 1)/3; 
         float v4 = (rand() % (int)amount + 1)/3; 
         gameObject->changePos(v2-amount/4, v3-amount/4, v4-amount/2+(1000/2));
+        gameObject->lookAt(mainCamera.position);
         //gameObject->changeRotationGlobal(0.0, 0.0, 0.0);
     }
 

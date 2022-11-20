@@ -127,83 +127,87 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
     }
 }
 
-static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject)
+static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject, const bool batch)
 {
-    //get id of the object's vertex and index buffer
-   Uint32 i = 0;
-   bool found = false;
-   for(verticesindexesData* viDataTaken : uniqueViData)
-   {
-        if(viDataTaken->verticies == gameObject->viData->verticies && viDataTaken->indicies == gameObject->viData->indicies)
+    Sint32 viIndex1 = -1;
+    if(batch)
+    {
+        //get id of the object's vertex and index buffer
+        Uint32 i = 0;
+        bool found = false;
+        for(verticesindexesData* viDataTaken : uniqueViData)
         {
-            if(memcmp(viDataTaken->objectData, gameObject->viData->objectData, gameObject->viData->verticies) == 0)
-            {
-                if(memcmp(viDataTaken->indexData, gameObject->viData->indexData, gameObject->viData->indicies) == 0)
+                if(viDataTaken->verticies == gameObject->viData->verticies && viDataTaken->indicies == gameObject->viData->indicies)
                 {
-                    found = true;
-                    break;
+                    if(memcmp(viDataTaken->objectData, gameObject->viData->objectData, gameObject->viData->verticies) == 0)
+                    {
+                        if(memcmp(viDataTaken->indexData, gameObject->viData->indexData, gameObject->viData->indicies) == 0)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
                 }
+                i++;
+        }
+        if(!found)
+        {    //make a copy of original object data
+                verticesindexesData* vid = new verticesindexesData;
+                vid->objectData = (float*)malloc(gameObject->viData->verticies);
+                vid->indexData = (unsigned int*)malloc(gameObject->viData->indicies);
+                vid->verticies = gameObject->viData->verticies;
+                vid->indicies = gameObject->viData->indicies;
+
+                memcpy((void*)vid->objectData, gameObject->viData->objectData,gameObject->viData->verticies);
+                memcpy((void*)vid->indexData, gameObject->viData->indexData, gameObject->viData->indicies);
+
+                uniqueViData.push_back(vid);
+        }
+
+        viIndex1 = i;
+
+        //serach available vertex buffers objects to use
+
+        //check vertex buffer type and objects amount binded
+        std::vector<vertexBufferStruct*> possiblevbs;    
+        for(vertexBufferStruct* vbs : vertexBuffers)
+        {
+            if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < numObjectsVerVertex) //replace numObjectsVerVertex with vram size minus a bit? how to get vram size?
+            {
+                possiblevbs.push_back(vbs);
             }
         }
-        i++;
-   }
-   if(!found)
-   {    //make a copy of original object data
-        verticesindexesData* vid = new verticesindexesData;
-        vid->objectData = (float*)malloc(gameObject->viData->verticies);
-        vid->indexData = (unsigned int*)malloc(gameObject->viData->indicies);
-        vid->verticies = gameObject->viData->verticies;
-        vid->indicies = gameObject->viData->indicies;
 
-        memcpy((void*)vid->objectData, gameObject->viData->objectData,gameObject->viData->verticies);
-        memcpy((void*)vid->indexData, gameObject->viData->indexData, gameObject->viData->indicies);
-
-        uniqueViData.push_back(vid);
-   }
-
-    const Uint32 viIndex1 = i;
-
-    //serach available vertex buffers objects to use
-
-    //check vertex buffer type and objects amount binded
-    std::vector<vertexBufferStruct*> possiblevbs;    
-    for(vertexBufferStruct* vbs : vertexBuffers)
-    {
-        if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < numObjectsVerVertex) //replace numObjectsVerVertex with vram size minus a bit? how to get vram size?
+        //search for vbs with existing binded texture - piortize
+        std::vector<vertexBufferStruct*> possiblevbs2; 
+        for(vertexBufferStruct* vbs : possiblevbs)
         {
-            possiblevbs.push_back(vbs);
-        }
-    }
-
-    //search for vbs with existing binded texture - piortize
-    std::vector<vertexBufferStruct*> possiblevbs2; 
-    for(vertexBufferStruct* vbs : possiblevbs)
-    {
-        size_t textureIndex = 0;
-        for(textureObject* to : vbs->texturesBinded)
-        {
-            if(to == gameObject->to)
+            size_t textureIndex = 0;
+            for(textureObject* to : vbs->texturesBinded)
             {
-                //same vi type, not at binded objects limit, and got binded texture already
-                updateTextureBinding(textureIndex, gameObject);
+                if(to == gameObject->to)
+                {
+                    //same vi type, not at binded objects limit, and got binded texture already
+                    updateTextureBinding(textureIndex, gameObject);
+                    vbs->bindedGameObjects.push_back(gameObject);
+                    return;
+                }
+                textureIndex++;
+            }   
+        }
+
+        //no texture already binded, can bind new check
+        for(vertexBufferStruct* vbs : possiblevbs)
+        {
+            if(vbs->texturesBinded.size() < 8) //todo set to device max texture bind later.
+            {
+                //bind texture
+                updateTextureBinding(vbs->texturesBinded.size(), gameObject);
+                vbs->texturesBinded.push_back(gameObject->to); //todo at some point make able to bind multiple textures per object
+
                 vbs->bindedGameObjects.push_back(gameObject);
                 return;
             }
-            textureIndex++;
-        }   
-    }
-
-    //no texture already binded, can bind new check
-    for(vertexBufferStruct* vbs : possiblevbs)
-    {
-        if(vbs->texturesBinded.size() < 8) //todo set to device max texture bind later.
-        {
-            //bind texture
-            updateTextureBinding(vbs->texturesBinded.size(), gameObject);
-            vbs->texturesBinded.push_back(gameObject->to); //todo at some point make able to bind multiple textures per object
-
-            vbs->bindedGameObjects.push_back(gameObject);
-            return;
         }
     }
 
@@ -211,8 +215,9 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
 
     vertexBufferStruct* vbs = new vertexBufferStruct;
     vertexBuffers.push_back(vbs);
-
     vbs->viIndex = viIndex1;
+
+
     vbs->bindedGameObjects.push_back(gameObject);
 
     //bind shaders
