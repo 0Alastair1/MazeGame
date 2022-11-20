@@ -52,6 +52,7 @@ static inline void render()
             {            
                 glActiveTexture(GL_TEXTURE0 + i); 
                 glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                glUniform1i(i, vbs->texturesBinded[i]->textureID);
                 texturesBindedprev[i] = vbs->texturesBinded[i]->textureID;
             }
         }
@@ -128,7 +129,6 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
 
 static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject)
 {
-
     //get id of the object's vertex and index buffer
    Uint32 i = 0;
    bool found = false;
