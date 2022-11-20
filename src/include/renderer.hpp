@@ -103,7 +103,7 @@ struct gameToRenderObject
         this->update(modelPosition, true);
         this->verticiesChanged = true;
     }
-    /*
+    
     void movePosBy(float x, float y, float z)
     {
         this->position = glm::vec3(x, y, z);
@@ -111,6 +111,7 @@ struct gameToRenderObject
         this->update(modelPosition, true);
         this->verticiesChanged = true;
     }
+    /*
     void changeScale(float x, float y, float z) //todo
     {
         this->scale = glm::vec3(x, y, z );
@@ -118,6 +119,7 @@ struct gameToRenderObject
         this->verticiesChanged = true;
     }
     */
+   /*
     void changeRotation(float x, float y, float z)
     {
         auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));
@@ -126,7 +128,7 @@ struct gameToRenderObject
         this->update(rotationMatrix, false);
 
         this->verticiesChanged = true;
-    }
+    }*/
     void changeRotationGlobal(float x, float y, float z)
     {
         auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));

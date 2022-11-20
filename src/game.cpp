@@ -24,7 +24,6 @@ static inline void initGame()
         float v3 = (rand() % (int)amount + 1)/3; 
         float v4 = (rand() % (int)amount + 1)/3; 
         gameObject->changePos(v2-amount/4, v3-amount/4, v4-amount/2+(1000/2));
-        //gameObject->pointAt(mainCamera.position);
         //gameObject->changeRotationGlobal(0.0, 0.0, 0.0);
     }
 
@@ -67,7 +66,7 @@ static inline void gameLoop()
     for(gameToRenderObject* gameObject : gameToRenderObjects)
     {
 
-        gameObject->changePos(gameObject->position.x, gameObject->position.y, gameObject->position.z);
+        //gameObject->changePos(gameObject->position.x, gameObject->position.y, gameObject->position.z);
 
         gameObject->lookAt(mainCamera.position);
 
