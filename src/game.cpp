@@ -67,7 +67,8 @@ static inline void gameLoop()
     {
 
         //gameObject->changePos(gameObject->position.x, gameObject->position.y, gameObject->position.z);
-        gameObject->changeRotationGlobal(1.0f, 0.0f,0.0f);
+        float random = (rand() % 150)/ 100;
+        gameObject->changeRotationGlobal(random, random,random);
         //gameObject->lookAt(mainCamera.position);
 
         i+= 1.0f;
