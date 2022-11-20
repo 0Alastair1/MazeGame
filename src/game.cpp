@@ -67,8 +67,8 @@ static inline void gameLoop()
     {
 
         //gameObject->changePos(gameObject->position.x, gameObject->position.y, gameObject->position.z);
-
-        gameObject->lookAt(mainCamera.position);
+        gameObject->changeRotationGlobal(1.0f, 0.0f,0.0f);
+        //gameObject->lookAt(mainCamera.position);
 
         i+= 1.0f;
     }

@@ -5,8 +5,8 @@ static inline void initUi()
     init_ImGui();
 }
 
-#define windowHeight 480
-#define windowWidth 480
+#define windowWidth 1280
+#define windowHeight 720   
 
 static inline void init_SDL()
 {
@@ -48,7 +48,7 @@ static inline void init_SDL()
 
     // glad
     gladLoadGLLoader(SDL_GL_GetProcAddress);
-    glViewport(0, 0, windowHeight, windowWidth);
+    glViewport(0, 0, windowWidth, windowHeight);
 
     SDL_ShowWindow(window);
 
