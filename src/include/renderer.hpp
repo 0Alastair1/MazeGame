@@ -39,7 +39,7 @@ struct gameToRenderObject
     Uint32 id;
     glm::vec3 position;
     glm::vec3 scale;
-    glm::vec4 rotation;
+    glm::vec3 rotation;
 
     //only update the objectdata if previous stuff changed
     glm::vec3 previousPosition;
@@ -63,7 +63,7 @@ struct gameToRenderObject
         this->id = 0;
         this->position = glm::vec3(0.0f, 0.0f, 0.0f);
         this->scale = { 1.0f, 1.0f, 1.0f};
-        this->rotation = {0.0f ,0.0f, 0.0f, 0.0f};
+        this->rotation = {0.0f ,0.0f, 0.0f};
         this->orthoProj = orthoProject;
 
         this->viData = new verticesindexesData;
@@ -79,33 +79,69 @@ struct gameToRenderObject
 
         verticiesChanged = true;
     }
-    void update()
+    void update(glm::mat4 modelProj, bool left)
     {
-        //updates the objects verticies by its position, scale and rotation
-        //this->viData->verticies
-
-        //model projection 
-        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), this->position);
-        glm::mat4 modelRotation;
-        glm::mat4 modelScale;
-
-        glm::mat4 modelProj = modelPosition;
+        //apply given matrix to the models verticies
 
         for(size_t i =0; i < ((this->viData->verticies/4)/3)/3; i++)
         {
             glm::vec4 tmpChange = glm::vec4(glm::make_vec3(&this->viData->objectData[i * 9]), 1.0f);
 
-            tmpChange = modelProj * tmpChange;
+            if(left)
+                tmpChange = modelProj * tmpChange;
+            else
+                tmpChange = tmpChange * modelProj;
 
             memcpy((void*)&this->viData->objectData[i * 9], (glm::value_ptr(tmpChange)), sizeof(float) * 3);
         }
     }
     void changePos(float x, float y, float z)
     {
+        glm::vec3 toPosVector = this->position - glm::vec3(x, y, z);
         this->position = glm::vec3(x, y, z);
-        this->update();
+        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), toPosVector);
+        this->update(modelPosition, true);
         this->verticiesChanged = true;
     }
+    /*
+    void movePosBy(float x, float y, float z)
+    {
+        this->position = glm::vec3(x, y, z);
+        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), this->position);
+        this->update(modelPosition, true);
+        this->verticiesChanged = true;
+    }
+    void changeScale(float x, float y, float z) //todo
+    {
+        this->scale = glm::vec3(x, y, z );
+        //this->update();
+        this->verticiesChanged = true;
+    }
+    */
+    void changeRotation(float x, float y, float z)
+    {
+        auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));
+        rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(y), glm::normalize(glm::vec3(0,1,0)));
+        rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(0,0,1)));
+        this->update(rotationMatrix, false);
+
+        this->verticiesChanged = true;
+    }
+    void changeRotationGlobal(float x, float y, float z)
+    {
+        auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));
+        rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(y), glm::normalize(glm::vec3(0,1,0)));
+        rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(0,0,1)));
+        this->update(rotationMatrix, true);
+
+        this->verticiesChanged = true;
+    }
+    void lookAt(glm::vec3 loc) //broken
+    {
+        const glm::mat4 lookAtMatrix = glm::inverse(glm::lookAt(this->position, loc, glm::vec3(0, 1, 0)));
+        this->update(lookAtMatrix, true);
+    }
+
 };
 
 static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObjectv);
@@ -170,4 +206,8 @@ static inline void genTextures();
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
 static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject);
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);
-static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject) ;
+static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject);
+static inline void uniFormPerFrame();
+
+static float color = 0.0;
+static float colorIncrease = 0.001;

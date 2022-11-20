@@ -112,8 +112,8 @@ static inline void initRender()
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE); //enable these
+    //glCullFace(GL_BACK);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

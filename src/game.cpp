@@ -1,13 +1,13 @@
 
 static inline void initGame()
 {
-    for(size_t i = 0; i < 1'000'000; i++)
+    for(size_t i = 0; i < 1'000'0; i++)
     {
         const float triangleData[] = {
-        -0.5f, -0.5f, 0.0f,/*color*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
-        0.5f, -0.5f, 0.0f, /*color*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
-        0.5f,  0.5f, 0.0f, /*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
-        -0.5f,  0.5f, 0.0f,/*color*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
+        -0.5f, -0.5f, 0.0f,/*unused*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+        0.5f, -0.5f, 0.0f, /*unused*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture index, automatically set*/ 0.0f,
+        0.5f,  0.5f, 0.0f, /*unused*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f,
+        -0.5f,  0.5f, 0.0f,/*unused*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture index, automatically set*/ 0.0f
         };
         const unsigned int numberofCollums = 8;
         const unsigned int triangleIndecies[] = {
@@ -16,17 +16,19 @@ static inline void initGame()
         };
         gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false);
         glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
+
+        mainCamera.position.x = -20.0f;
         
         const float amount = 1000;
         float v2 = (rand() % (int)amount + 1)/3; 
         float v3 = (rand() % (int)amount + 1)/3; 
         float v4 = (rand() % (int)amount + 1)/3; 
-        gameObject->changePos(v2-amount/4, v3-amount/4, v4-amount/2);
+        gameObject->changePos(v2-amount/4, v3-amount/4, v4-amount/2+(1000/2));
+        //gameObject->pointAt(mainCamera.position);
+        //gameObject->changeRotationGlobal(0.0, 0.0, 0.0);
     }
 
-    
     fpsMouse(true);
-
 }
 
 
@@ -59,5 +61,16 @@ static inline void gameLoop()
     if(getMouseKey(false))
     {
         fpsMouse(true);
+    }
+
+    float i = 0;
+    for(gameToRenderObject* gameObject : gameToRenderObjects)
+    {
+
+        gameObject->changePos(gameObject->position.x, gameObject->position.y, gameObject->position.z);
+
+        gameObject->lookAt(mainCamera.position);
+
+        i+= 1.0f;
     }
 }

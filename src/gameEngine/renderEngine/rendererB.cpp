@@ -6,7 +6,7 @@ static inline void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //view matrix - only needs to be ran once per frame
+    //view matrix - only needs to be ran when window resized oor fov change
     mainCamera.perspectiveProjectionMatrix = glm::perspective(45.0f, (float)windowwidth / (float)windowheight, 0.1f, 10000.0f); //remove this
 
     //projection matrix
@@ -14,6 +14,8 @@ static inline void render()
     mainCamera.cameraFacingDirVec = glm::normalize(yawPitchDirectionCalc(mainCamera.yaw, mainCamera.pitch));
 
     glm::mat4 viewMatrix = glm::lookAt(mainCamera.position, mainCamera.position +  mainCamera.cameraFacingDirVec, mainCamera.cameraUp);
+
+    uniFormPerFrame();
 
     drawCalls = 0;
     for(vertexBufferStruct* vbs : vertexBuffers)
@@ -83,20 +85,25 @@ static inline void render()
     SDL_GL_SwapWindow(window);
 }
 
+static inline void uniFormPerFrame()
+{
+    //color uniform
+
+    for(float i = 0; i < deltaTime/3; i+=1.0f) //remove
+    {
+        if(color > 0.60) colorIncrease = -0.001;
+        else if(color < 0.40) colorIncrease = 0.001;
+    
+        color += colorIncrease;
+    }
+
+}
+
 static inline void performUniformOperation(const vertexBufferStruct* vbs, const glm::mat4 viewMatrix)
 {
     
     if(!strcmp(vbs->shader->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop maybe not
     {
-        //color uniform
-        static float r = 0.5;
-        static float increment = 0.001;
-        if(r > 0.75)
-            increment = -0.001;
-        else if(r < 0.25)
-            increment = 0.001;
-        
-        r += increment;
 
         //todo put matrix stuff in uniform object?
 
@@ -115,7 +122,7 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         //set uniforms
         //glUniformMatrix3x4fv
         glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
-        glUniform4f(vbs->shader->u_colorUniformLocation, r+r/4, r-r/2, r+r/2, r+r/2);
+        glUniform4f(vbs->shader->u_colorUniformLocation, color+color/4, color-color/2, color+color/2, 1.0f);
     }
 }
 
