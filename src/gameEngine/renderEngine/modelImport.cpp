@@ -11,9 +11,10 @@ static inline void importModel(const std::string &name, const char *filePathC)
     }
 
     // convert path inputted into platform specific
-    std::string slash = getSlash(); //memory issues when getSlash returned char?
-    std::replace(filePath.begin(), filePath.end(), '/', slash.c_str()[0]);
-    std::replace(filePath.begin(), filePath.end(), '\\', slash.c_str()[0]);
+    char* slash = getSlash(); //memory issues when getSlash returned char?
+    std::replace(filePath.begin(), filePath.end(), '/', slash[0]);
+    std::replace(filePath.begin(), filePath.end(), '\\', slash[0]);
+    free(slash);
 
     printf("%s", filePath.c_str());
 }
@@ -31,7 +32,7 @@ static inline rawModelStruct *getModel(std::string name)
     return nullptr;
 }
 
-static inline std::string getSlash()
+static inline char* getSlash()
 {
     // calc the flashes
     boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
@@ -42,9 +43,11 @@ static inline std::string getSlash()
 
         if (currentDir[i] == '\\' || currentDir[i] == '/')
         {
-            return  currentDir.substr(0, 1);;
+            char* character = (char*)malloc(sizeof(char));
+            memcpy((void*)character, &currentDir[i], sizeof(char));
+            return character;
         }
     }
 
-    return "/"; //?
+    return nullptr; //?
 }

@@ -3,9 +3,10 @@ static inline void genTextures() //textures are made automaticlly when added int
     boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
     std::string currentDir = currentDirPath.string();
 
-    std::string slashes = getSlash();
+    char* slashes = getSlash();
 
-    std::string texturesFolder = slashes + "textures" + slashes;
+    std::string texturesFolder = slashes[0] + (std::string)"textures" + slashes[0];
+    free(slashes);
     std::string textureDirectory = currentDir + texturesFolder;
 
     if(!boost::filesystem::exists(textureDirectory))
