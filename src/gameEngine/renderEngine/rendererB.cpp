@@ -182,28 +182,59 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         std::vector<vertexBufferStruct*> possiblevbs2; 
         for(vertexBufferStruct* vbs : possiblevbs)
         {
-            size_t textureIndex = 0;
-            for(textureObject* to : vbs->texturesBinded)
+            std::vector<textureObject*>textureBindsIds;
+            Uint8 texturesFound = 0;
+            for(size_t ii = 0; ii < vbs->texturesBinded.size(); ii++)
             {
-                if(to == gameObject->to)
+                for(textureObject* to : gameObject->to)
                 {
-                    //same vi type, not at binded objects limit, and got binded texture already
-                    updateTextureBinding(textureIndex, gameObject);
-                    vbs->bindedGameObjects.push_back(gameObject);
-                    return;
+                    if(to == vbs->texturesBinded[ii]) //dont need to worry about the locations of these textures in the vbs yet
+                    {
+                        texturesFound++;
+                        textureBindsIds.push_back(to);
+                        break;
+                    }
                 }
-                textureIndex++;
-            }   
+            }
+
+            std::vector<textureObject*> gameObjectTexturesCopy = gameObject->to;
+            if(vbs->texturesBinded.size() + gameObject->to.size() - textureBindsIds.size() <= 8)//if theres room to store the aditional textures if needed
+            {
+                for (size_t ii = 0; ii < gameObjectTexturesCopy.size(); ii++)
+                {
+                    for(textureObject* textureBinds : textureBindsIds)
+                    {
+                        if(textureBinds == gameObjectTexturesCopy[ii])
+                        {
+                            gameObjectTexturesCopy.erase(gameObjectTexturesCopy.begin() + ii); 
+                            ii=0;
+                        }
+                    }
+                }
+                //gameobectTexturesCopy now contains the textures that need to be added to the vbs todo under lines and func
+
+                for(textureObject* to : gameObjectTexturesCopy)
+                {
+                    vbs->texturesBinded.push_back(to);
+                }
+
+                updateTextureBinding(vbs, gameObject);
+                vbs->bindedGameObjects.push_back(gameObject);
+                return;
+            }
         }
 
         //no texture already binded, can bind new check
         for(vertexBufferStruct* vbs : possiblevbs)
         {
-            if(vbs->texturesBinded.size() < 8) //todo set to device max texture bind later.
+            if(vbs->texturesBinded.size() + gameObject->to.size() < 8) //todo set to device max texture bind later.
             {
-                //bind texture
-                updateTextureBinding(vbs->texturesBinded.size(), gameObject);
-                vbs->texturesBinded.push_back(gameObject->to); //todo at some point make able to bind multiple textures per object
+                //bind textures
+                for(textureObject* to : gameObject->to)
+                {
+                    vbs->texturesBinded.push_back(to);
+                }
+                updateTextureBinding(vbs, gameObject);
 
                 vbs->bindedGameObjects.push_back(gameObject);
                 return;
@@ -221,8 +252,11 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vbs->bindedGameObjects.push_back(gameObject);
 
     //bind shaders
-    vbs->texturesBinded.push_back(gameObject->to);
-    updateTextureBinding(0, gameObject);
+    for(textureObject* to : gameObject->to)
+    {
+        vbs->texturesBinded.push_back(to);
+    }
+    updateTextureBinding(vbs, gameObject);
 
     //vertex buffer object
     glGenBuffers(1, &vbs->vertexbuffer);
@@ -270,13 +304,28 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, allIndexindexBufferSizes, dstData, GL_STATIC_DRAW);
 }
 
-static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject) //texture index of the vbs - todo make changing textures not in vbs
+static inline void updateTextureBinding(vertexBufferStruct* vbs, gameToRenderObject* gameObject) //texture index of the vbs - todo make changing textures not in vbs
 {
-    gameObject->bindedTextureSlot = textureIndex;
-    const float texureIndexFloat = textureIndex;
 
-    for(size_t i =0; i < ((gameObject->viData->verticies/4)/3)/3; i++)
+    for(size_t i =0; i < ((gameObject->viData->verticies/4)/3)/3; i++) //todo for the other vertex's texture ids
     {
+        float texureIndexFloat = -1.0f; //assumes textures for the object are actually in the vbs
+
+        //get the texture name from the objects vertex id
+        const float vertexIndex = gameObject->viData->objectData[(i* 9) + 8];
+        const std::string thisTextureBinded = gameObject->to[(int)vertexIndex]->textureName;
+        
+        //convert that id to the corrasponding texture in the vbs and write back
+        for(size_t ii = 0; i < vbs->texturesBinded.size(); i++)
+        {
+            if(thisTextureBinded == vbs->texturesBinded[ii]->textureName)
+            {
+                texureIndexFloat = i;
+                break;
+            }
+        }
+
+        //rewrite the float with the updated index
         memcpy((void*)&gameObject->viData->objectData[(i * 9) + 8], &texureIndexFloat, sizeof(float));
     }
 }

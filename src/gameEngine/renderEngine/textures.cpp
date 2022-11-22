@@ -18,6 +18,11 @@ static inline void genTextures() //textures are made automaticlly when added int
     std::string texturesFolder = slashes + "textures" + slashes;
     std::string textureDirectory = currentDir + texturesFolder;
 
+    if(!boost::filesystem::exists(textureDirectory))
+    {
+        boost::filesystem::create_directories(textureDirectory);
+    }
+
     std::vector<std::string> textureNames;
 
     for (const auto & entry : std::filesystem::directory_iterator(textureDirectory))

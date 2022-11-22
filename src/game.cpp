@@ -14,7 +14,8 @@ static inline void initGame()
             0, 1, 2,
             0, 2, 3
         };
-        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), "wood.png", false, true);
+        std::vector<const char*> textureNames = {"wood.png"};
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNames, false, true, false);
         glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
 
         mainCamera.position.x = -20.0f;
@@ -68,7 +69,7 @@ static inline void gameLoop()
     {
 
         //gameObject->changePos(gameObject->position.x, gameObject->position.y, gameObject->position.z);
-        float random = (rand() % 150)/ 100;
+        float random = (float)((rand() % 150)/ 100)/10*(float)deltaTime;
         gameObject->changeRotationGlobal(random, random,random);
         //gameObject->lookAt(mainCamera.position);
 

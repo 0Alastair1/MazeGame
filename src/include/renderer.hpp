@@ -50,15 +50,17 @@ struct gameToRenderObject
     bool orthoProj;
 
     verticesindexesData* viData; //data of verticies
-    textureObject* to; //binded textureobject
-    Uint8 bindedTextureSlot;
+    std::vector<textureObject*> to; //binded textureobject
+
+    bool legacyRender;
 
     gameToRenderObject(const float* cobjectData,
         const unsigned int* cindexData,
         Uint32 cverticies,
         Uint32 cindicies,
-        const char* textureName,
-        bool orthoProject)
+        const std::vector<const char*>& textureNames,
+        bool orthoProject,
+        bool clegacyRender)
     {
         this->id = 0;
         this->position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -74,8 +76,13 @@ struct gameToRenderObject
         this->viData->indexData = (const unsigned int*)malloc(this->viData->indicies);
         memcpy((void*)this->viData->objectData, cobjectData, this->viData->verticies);
         memcpy((void*)this->viData->indexData, cindexData, this->viData->indicies);
+        
+        this->legacyRender = clegacyRender;//todo
 
-        to = getTexture(textureName);
+        for(size_t i = 0; i < textureNames.size(); i++)
+        {
+            to.push_back(getTexture(textureNames[i]));
+        }
 
         verticiesChanged = true;
     }
@@ -131,6 +138,7 @@ struct gameToRenderObject
     }*/
     void changeRotationGlobal(float x, float y, float z)
     {
+        this->rotation += glm::vec3(x,y,z);//? maybe make a get rotatoin func?
         auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));
         rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(y), glm::normalize(glm::vec3(0,1,0)));
         rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(0,0,1)));
@@ -206,9 +214,9 @@ struct gpuStruct
 static inline void setup_default_shaders();
 static inline void genTextures();
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
-static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject, bool batch);
+static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<const char*>& textureNames, bool orthoProject, bool batch, bool legacyRender);
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);
-static inline void updateTextureBinding(Uint8 textureIndex, gameToRenderObject* gameObject);
+static inline void updateTextureBinding(vertexBufferStruct* textureBindsIds, gameToRenderObject* gameObject);
 static inline void uniFormPerFrame();
 
 static float color = 0.0;

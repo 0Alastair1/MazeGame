@@ -147,9 +147,9 @@ static inline void initRender()
     return;
 }
 
-static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const char* textureName, bool orthoProject, bool batch)
+static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<const char*>& textureNames, bool orthoProject, bool batch, bool legacyRender)//todo legacyRender
 {
-    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureName, orthoProject);
+    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject, legacyRender);
     assignGameObjectToVertexBuffer(gameObject, batch);
 
 

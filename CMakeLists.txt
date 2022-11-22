@@ -12,6 +12,7 @@ add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/libsamplerate EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/boost EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/assimp EXCLUDE_FROM_ALL)
 
 add_executable(mazeGame src/main.cpp)
 
@@ -50,6 +51,10 @@ include_directories(mazeGame PUBLIC src/include src/
     vendor/glad/src/ 
     vendor/glm/ 
     vendor/imgui/ 
+    vendor/assimp/include/
+    vendor/assimp/include/assimp/Compiler/ 
+    vendor/assimp/include/assimp/port/AndroidJNI/ 
+    build/vendor/assimp/include 
 )
 
 target_link_libraries(mazeGame PRIVATE SDL2-static)

@@ -22,6 +22,7 @@
 #include "../../vendor/imgui/imgui_widgets.cpp"
 #include "../../vendor/imgui/backends/imgui_impl_opengl3.cpp"
 
+
 #ifndef __GNUC__
 #undef vsnprintf _vsnprintf
 #endif
@@ -31,6 +32,10 @@
 
 #include "../vendor/stb/stb_image.h"
 #include "../vendor/stb/stb_image_write.h"
+
+#include <../vendor/assimp/include/assimp/Importer.hpp>
+#include <../vendor/assimp/include/assimp/scene.h>
+#include <../vendor/assimp/include/assimp/postprocess.h>
 
 #include <string>
 #include <vector>
@@ -75,7 +80,7 @@ float deltaTime = 0;
 #include "gameEngine/renderEngine/renderer.cpp"
 #include "gameEngine/renderEngine/shaders.cpp"
 #include "gameEngine/renderEngine/textures.cpp"
+#include "gameEngine/renderEngine/modelImport.cpp"
 #include "gameEngine/renderEngine/rendererB.cpp"
 #include "gameEngine/inputEngine/input.cpp"
 #include "game.cpp"
-
