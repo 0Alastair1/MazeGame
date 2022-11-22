@@ -15,7 +15,7 @@ static inline void importModel(const std::string &name, const char *filePathC)
     std::replace(filePath.begin(), filePath.end(), '/', slash.c_str()[0]);
     std::replace(filePath.begin(), filePath.end(), '\\', slash.c_str()[0]);
 
-    printf("%s", filePath);
+    printf("%s", filePath.c_str());
 }
 
 static inline rawModelStruct *getModel(std::string name)
