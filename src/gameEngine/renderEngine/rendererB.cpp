@@ -90,10 +90,10 @@ static inline void uniFormPerFrame()
 {
     //color uniform
 
-    for(float i = 0; i < deltaTime/3; i+=1.0f) //remove
+    for(int i = 0; i < (int)deltaTime/3; i++) //remove
     {
-        if(color > 0.60) colorIncrease = -0.001;
-        else if(color < 0.40) colorIncrease = 0.001;
+        if(color > 0.60) colorIncrease = -0.001f;
+        else if(color < 0.40) colorIncrease = 0.001f;
     
         color += colorIncrease;
     }
