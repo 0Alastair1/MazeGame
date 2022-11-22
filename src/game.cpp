@@ -1,6 +1,8 @@
 
 static inline void initGame()
 {
+    importModel("test", "..\\vendor\\glTF-Sample-Models\\2.0\\Sponza\\glTF\\Sponza.gltf");
+
     for(size_t i = 0; i < 1'000'0; i++)
     {
         const float triangleData[] = {

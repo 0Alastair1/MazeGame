@@ -3,17 +3,7 @@ static inline void genTextures() //textures are made automaticlly when added int
     boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
     std::string currentDir = currentDirPath.string();
 
-    //calc the flashes
-    std::string slashes;
-
-    for (int i = currentDir.size() - 1; i >= 0; i--) {
-
-        if(currentDir[i] == '\\' || currentDir[i] == '/')
-        {
-            slashes = currentDir[i];
-            break;
-        }
-    }
+    char slashes = getSlash();
 
     std::string texturesFolder = slashes + "textures" + slashes;
     std::string textureDirectory = currentDir + texturesFolder;

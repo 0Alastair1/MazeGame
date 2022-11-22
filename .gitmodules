@@ -25,3 +25,6 @@
 [submodule "vendor/assimp"]
 	path = vendor/assimp
 	url = https://github.com/assimp/assimp
+[submodule "vendor/glTF-Sample-Models"]
+	path = vendor/glTF-Sample-Models
+	url = https://github.com/KhronosGroup/glTF-Sample-Models

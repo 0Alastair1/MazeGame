@@ -53,6 +53,7 @@
 #include <unordered_map>
 #include<sstream>
 #include <time.h>
+#include <algorithm>
 
 #include "./include/audio.hpp"
 #include "./include/renderer.hpp"
@@ -60,6 +61,7 @@
 #include "./include/input.hpp"
 #include "./include/game.hpp"
 #include "./include/rendererB.hpp"
+#include "./include/modelImport.hpp"
 
 static SDL_Window *window;
 static SDL_GLContext glContext;
