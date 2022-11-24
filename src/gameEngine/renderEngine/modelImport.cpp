@@ -1,4 +1,4 @@
-static inline void importModel(const std::string &name, const char *filePathC)
+static inline void importModel(const std::string &name, const char *filePathC, const bool flip)
 {
     std::string filePath = filePathC;
 
@@ -18,11 +18,11 @@ static inline void importModel(const std::string &name, const char *filePathC)
 
     printf("%s", filePath.c_str());
 
-    assimpToModel(name, filePath);
+    assimpToModel(name, filePath, flip);
 }
 
 
-static inline void assimpToModel(const std::string &name, std::string filePath)
+static inline void assimpToModel(const std::string &name, std::string filePath, const bool flip)
 {
     rawModelStruct *rawModel = new rawModelStruct;
     rawModel->name = name;
@@ -73,23 +73,41 @@ static inline void assimpToModel(const std::string &name, std::string filePath)
                     rawModelData->normals.push_back(glm::vec3((float)currentMesh->mNormals[k].x, (float)currentMesh->mNormals[k].y, (float)currentMesh->mNormals[k].z));
                 }
 
+                if (currentMesh->HasTangentsAndBitangents())
+                {
+                    while(k >= rawModelData->tangents.size())
+                    {
+                        rawModelData->tangents.push_back(glm::vec3());
+                        rawModelData->bitangents.push_back(glm::vec3());
+                    }
+                    
+                    rawModelData->tangents[k] = (glm::vec3(currentMesh->mTangents[k].x, currentMesh->mTangents[k].y, currentMesh->mTangents[k].z));
+                    rawModelData->bitangents[k] = (glm::vec3(currentMesh->mBitangents[k].x, currentMesh->mBitangents[k].y, currentMesh->mBitangents[k].z));
+                }
+
+
                 for(size_t l = 0; l < 1; l++)
                 {
-                    if (currentMesh->mTextureCoords[l] != nullptr)
+                    if (currentMesh->HasTextureCoords(l))
                     {
                         rawModelData->texCoords.push_back(std::vector<glm::vec2>());
-                        rawModelData->tangents.push_back(std::vector<glm::vec3>());
-                        rawModelData->bitangents.push_back(std::vector<glm::vec3>());
+                        rawModelData->texCoords[l].push_back(glm::vec2());
 
-                        rawModelData->texCoords[l].push_back(glm::vec2(currentMesh->mTextureCoords[l][k].x, currentMesh->mTextureCoords[l][k].y));
-                        //rawModelData->tangents[l].push_back(glm::vec3(currentMesh->mTangents[l].x, currentMesh->mTangents[l].y, currentMesh->mTangents[l].z));
-                        //rawModelData->bitangents[l].push_back(glm::vec3(currentMesh->mBitangents[l].x, currentMesh->mBitangents[l].y, currentMesh->mBitangents[l].z));
+                        while(l > rawModelData->texCoords.size()) rawModelData->texCoords.push_back(std::vector<glm::vec2>());
+
+                        while(k > rawModelData->texCoords[l].size()) rawModelData->texCoords[l].push_back(glm::vec2());
+
+                            rawModelData->texCoords[l][k] = (glm::vec2(currentMesh->mTextureCoords[l][k].x, currentMesh->mTextureCoords[l][k].y));
                     }
                     else
                     {
                         break;
                     }
                 }
+               // else if (currentMesh->HasVertexColors())
+                //{
+                    //
+                //}
             }
 
             for (Uint32 k = 0; k < currentMesh->mNumFaces; k++)
@@ -117,7 +135,7 @@ static inline void assimpToModel(const std::string &name, std::string filePath)
                 std::string texturePath = getCurrentDirectory() + slashS + filePath;
                 std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
 
-                makeTexture(filePathParent + slashS + strs, str.C_Str(), diffuse);
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), diffuse, flip);
                 rawModelData->textureNames.push_back(str.C_Str());
             }
             //aiTextureType_SPECULAR aiTextureType_HEIGHT aiTextureType_AMBIENT

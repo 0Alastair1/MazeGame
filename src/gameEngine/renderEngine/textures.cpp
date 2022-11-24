@@ -38,7 +38,7 @@ static inline void genTextures() //textures are made automaticlly when added int
     }*/
 }
 
-static inline void makeTexture(std::string filePath, std::string textureName, textureTypeEnum textureType)
+static inline void makeTexture(std::string filePath, std::string textureName, textureTypeEnum textureType, const bool flip)
 {
     for(textureObject* to : textureObjects)
     {
@@ -52,6 +52,7 @@ static inline void makeTexture(std::string filePath, std::string textureName, te
     int height = 0;
     int bpp = 0;
 
+    stbi_set_flip_vertically_on_load(flip);
     auto buffer = stbi_load(filePath.c_str(), &width, &height, &bpp, 4);
     printf("%s - %s\n", stbi_failure_reason(), filePath.c_str());
 

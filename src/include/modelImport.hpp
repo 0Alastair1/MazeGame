@@ -8,8 +8,9 @@ struct rawModelDataStruct
     std::vector<Uint32> indices;
     std::vector<glm::vec3> normals;
     std::vector<std::vector<glm::vec2>> texCoords;
-    std::vector<std::vector<glm::vec3>> tangents;
-    std::vector<std::vector<glm::vec3>> bitangents;
+    std::vector<glm::vec3> tangents;
+    std::vector<glm::vec3> bitangents;
+
     
 
     Uint32 numVertices;
@@ -27,7 +28,7 @@ struct rawModelStruct
 };
 std::vector<rawModelStruct*> rawModels;
 
-static inline void importModel(const std::string& name, const char* filePathC);
+static inline void importModel(const std::string& name, const char* filePathC, const bool flip);
 static inline rawModelStruct* getModel(std::string name);
 static inline char* getSlash();
-static inline void assimpToModel(const std::string &name, std::string filePath);
+static inline void assimpToModel(const std::string &name, std::string filePath, const bool flip);

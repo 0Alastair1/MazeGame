@@ -1,8 +1,8 @@
 static float is = 0;
 static inline void initGame()
 {
-    importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf"); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
-    //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj");
+    importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
+    //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj", true);
     rawModelStruct* modelRaw = getModel("test");
 
     for(size_t i = 0; i < modelRaw->includedModels.size(); i++)
@@ -15,7 +15,7 @@ static inline void initGame()
 
     mainCamera.position = *(glm::vec3*)&(gameToRenderObjects[0]->viData->objectData[0]);
 
-    makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse);
+    makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse, true);
     std::vector<std::string> textureNames = {"wood.png"};
     
     for(size_t i = 0; i < 1; i++)
