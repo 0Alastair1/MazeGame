@@ -112,8 +112,8 @@ static inline void initRender()
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE); //enable these
-    //glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE); //enable these
+    glCullFace(GL_BACK);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -135,7 +135,7 @@ static inline void initRender()
     glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
 
-    glEnableVertexAttribArray(1); //color
+    glEnableVertexAttribArray(1); //normals
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 3*sizeof(float) ));
 
     glEnableVertexAttribArray(2); //texture coods
@@ -147,14 +147,46 @@ static inline void initRender()
     return;
 }
 
-static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<const char*>& textureNames, bool orthoProject, bool batch, bool legacyRender)//todo legacyRender
+static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender)//todo legacyRender
 {
+    if(deltaTime >= 5.0f)
+        exit(1);
+        
     gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject, legacyRender);
     assignGameObjectToVertexBuffer(gameObject, batch);
 
-
     gameToRenderObjects.push_back(gameObject);
     return gameObject;
+}
+
+//hack
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords)
+{
+    float* objectData = (float*)malloc(cobjectData.size() * (sizeof(float) * 9));
+    unsigned int* indexData = (unsigned int*)malloc(cindexData.size() * (sizeof(unsigned int)));
+
+    for (unsigned int i = 0; i < cobjectData.size(); i++)  
+    {
+        objectData[(i * 9) + 0] = cobjectData[i].x;
+        objectData[(i * 9) + 1] = cobjectData[i].y;
+        objectData[(i * 9) + 2] = cobjectData[i].z;
+
+        objectData[(i * 9) + 3] = normals[i].x;
+        objectData[(i * 9) + 4] = normals[i].y;
+        objectData[(i * 9) + 5] = normals[i].z;
+
+        objectData[(i * 9) + 6] = texCoords[i].x;
+        objectData[(i * 9) + 7] = texCoords[i].y;
+
+        objectData[(i * 9) + 8] = 0.0f;
+    }
+
+    for (unsigned int i = 0; i < cindexData.size(); i++)  
+    {
+        indexData[i] = cindexData[i];
+    }
+
+    return makeGameObject(objectData, indexData, cverticies, cindicies, textureNames, orthoProject, batch, legacyRender);
 }
 
 /*

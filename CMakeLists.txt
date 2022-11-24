@@ -61,6 +61,7 @@ target_link_libraries(mazeGame PRIVATE SDL2-static)
 target_link_libraries(mazeGame PRIVATE PortAudio)
 target_link_libraries(mazeGame PRIVATE samplerate)
 target_link_libraries(mazeGame PUBLIC Boost::filesystem Boost::system Boost::exception boost_exception Boost::throw_exception)
+target_link_libraries(mazeGame PRIVATE assimp)
 #target_link_libraries(mazeGame PRIVATE ${OPENGL_gl_LIBRARY})
 
 #add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) 

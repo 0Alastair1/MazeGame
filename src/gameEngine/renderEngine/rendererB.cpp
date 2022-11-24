@@ -52,7 +52,7 @@ static inline void render()
             {            
                 glActiveTexture(GL_TEXTURE0 + i); 
                 glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                glUniform1i(i, vbs->texturesBinded[i]->textureID);
+                //glUniform1i(i, vbs->texturesBinded[i]->textureID);
                 texturesBindedprev[i] = vbs->texturesBinded[i]->textureID;
             }
         }
@@ -90,13 +90,14 @@ static inline void uniFormPerFrame()
 {
     //color uniform
 
+    /*
     for(int i = 0; i < (int)deltaTime/3; i++) //remove
     {
         if(color > 0.60) colorIncrease = -0.001f;
         else if(color < 0.40) colorIncrease = 0.001f;
     
         color += colorIncrease;
-    }
+    }*/
 
 }
 
@@ -123,12 +124,12 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         //set uniforms
         //glUniformMatrix3x4fv
         glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
-        glUniform4f(vbs->shader->u_colorUniformLocation, color+color/4, color-color/2, color+color/2, 1.0f);
+        glUniform4f(vbs->shader->u_colorUniformLocation, 0.3f, 0.3f, 0.3f, 1.0f);
     }
 }
 
 static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject, const bool batch)
-{
+{                          //todo change amount of objects per vbs to depend on the number of vertices
     Sint32 viIndex1 = -1;
     if(batch)
     {
@@ -258,50 +259,74 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     }
     updateTextureBinding(vbs, gameObject);
 
-    //vertex buffer object
-    glGenBuffers(1, &vbs->vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, numObjectsVerVertex * gameObject->viData->verticies, nullptr, GL_DYNAMIC_DRAW);
-
-
-    //index buffer object - autogen for future use
-
-    const Uint32 indexBufferSize = gameObject->viData->indicies;
-    const Uint32 allIndexindexBufferSizes = numObjectsVerVertex * indexBufferSize;
-
-    vbs->fullIndexDataSize = allIndexindexBufferSizes;
-    vbs->indexData = (Uint32*)malloc(allIndexindexBufferSizes);
-    vbs->fullNumberOfElements = vbs->fullIndexDataSize/sizeof(Uint32);
-    //vbs->shader = gameObject-> fix shader per object
-    vbs->orthoProj = gameObject->orthoProj;
-
-    vbs->fullVertexDataSize = numObjectsVerVertex * gameObject->viData->verticies;
-    vbs->eachVertexSize = gameObject->viData->verticies;
-    vbs->vertexData = (float*)malloc(vbs->fullVertexDataSize);
-
-    Uint32* srcData = (Uint32*)malloc(indexBufferSize);
-    memcpy((void*)srcData, gameObject->viData->indexData, indexBufferSize);
-
-    const Uint32* dstData = vbs->indexData;
-
-    for (size_t ii = 0; ii < numObjectsVerVertex; ii++)
+    if(batch)
     {
-        memcpy((void*)((char*)dstData + (ii * indexBufferSize)), srcData, indexBufferSize);//remove char* conversion
-        
-        //increment the index data  
-        for(size_t iii = 0; iii < indexBufferSize/sizeof(unsigned int); iii++)
+
+        //vertex buffer object
+        glGenBuffers(1, &vbs->vertexbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
+        glBufferData(GL_ARRAY_BUFFER, numObjectsVerVertex * gameObject->viData->verticies, nullptr, GL_DYNAMIC_DRAW);
+
+
+        //index buffer object - autogen for future use
+
+        const Uint32 indexBufferSize = gameObject->viData->indicies;
+        const Uint32 allIndexindexBufferSizes = numObjectsVerVertex * indexBufferSize;
+
+        vbs->fullIndexDataSize = allIndexindexBufferSizes;
+        vbs->indexData = (Uint32*)malloc(allIndexindexBufferSizes);
+        vbs->fullNumberOfElements = vbs->fullIndexDataSize/sizeof(Uint32);
+        //vbs->shader = gameObject-> fix shader per object
+        vbs->orthoProj = gameObject->orthoProj;
+
+        vbs->fullVertexDataSize = numObjectsVerVertex * gameObject->viData->verticies;
+        vbs->eachVertexSize = gameObject->viData->verticies;
+        vbs->vertexData = (float*)malloc(vbs->fullVertexDataSize);
+
+        Uint32* srcData = (Uint32*)malloc(indexBufferSize);
+        memcpy((void*)srcData, gameObject->viData->indexData, indexBufferSize);
+
+        const Uint32* dstData = vbs->indexData;
+
+        for (size_t ii = 0; ii < numObjectsVerVertex; ii++)
         {
-            srcData[iii] += (vbs->eachVertexSize/sizeof(float))/9;
+            memcpy((void*)((char*)dstData + (ii * indexBufferSize)), srcData, indexBufferSize);//remove char* conversion
+            
+            //increment the index data  
+            for(size_t iii = 0; iii < indexBufferSize/sizeof(unsigned int); iii++)
+            {
+                srcData[iii] += (vbs->eachVertexSize/sizeof(float))/9;
+            }
         }
+        
+        free(srcData);
     }
-    
-    free(srcData);
+    else
+    {
+        //vertex buffer object
+        glGenBuffers(1, &vbs->vertexbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vbs->vertexbuffer);
+        glBufferData(GL_ARRAY_BUFFER, gameObject->viData->verticies, nullptr, GL_DYNAMIC_DRAW);
+        //index buffer object - autogen for future use
+
+        vbs->fullIndexDataSize = gameObject->viData->indicies;
+        vbs->indexData = (Uint32*)malloc(vbs->fullIndexDataSize);
+        vbs->fullNumberOfElements = vbs->fullIndexDataSize/sizeof(Uint32);
+        //vbs->shader = gameObject-> fix shader per object
+        vbs->orthoProj = gameObject->orthoProj;
+
+        vbs->eachVertexSize = gameObject->viData->verticies;
+        vbs->fullVertexDataSize = vbs->eachVertexSize;
+        vbs->vertexData = (float*)malloc(vbs->fullVertexDataSize);
+
+        memcpy((void*)vbs->indexData, gameObject->viData->indexData, vbs->fullIndexDataSize);
+    }
 
     glGenBuffers(1, &vbs->indexbuffer);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, allIndexindexBufferSizes, dstData, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vbs->fullIndexDataSize, vbs->indexData, GL_STATIC_DRAW);
 }
 
 static inline void updateTextureBinding(vertexBufferStruct* vbs, gameToRenderObject* gameObject) //texture index of the vbs - todo make changing textures not in vbs

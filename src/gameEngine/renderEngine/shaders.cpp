@@ -4,7 +4,7 @@ static inline void setup_default_shaders()
     {
         "#version 330 core \n \
         layout(location = 0) in vec3 vertexes; \
-        layout(location = 1) in vec3 unused; \
+        layout(location = 1) in vec3 normals; \
         layout(location = 2) in vec2 vTexCord; \
         layout(location = 3) in float textureIndex; \
         \
@@ -48,7 +48,7 @@ static inline void setup_default_shaders()
         \
         void main()	\
         {	\
-        	color = texture(TextureSlot0, texCord) * fColor; \
+        	color = texture(TextureSlot0, texCord) + fColor; \
         }"
     };
 

@@ -54,8 +54,10 @@
 #include<sstream>
 #include <time.h>
 #include <algorithm>
+#include <cstdlib>
 
-#include "./include/audio.hpp"
+#include "./include/audio.hpp" 
+#include "./include/textures.hpp"
 #include "./include/renderer.hpp"
 #include "./include/windowUi.hpp"
 #include "./include/input.hpp"

@@ -1,13 +1,6 @@
 static inline void initRender();
 static inline void render();
 
-struct textureObject
-{
-    std::string textureName;
-    Uint32 textureID;
-};
-static std::vector<textureObject*> textureObjects;
-
 static inline textureObject* getTexture(const char* textureName);
 struct shaderObject
 {
@@ -54,11 +47,11 @@ struct gameToRenderObject
 
     bool legacyRender;
 
-    gameToRenderObject(const float* cobjectData,
-        const unsigned int* cindexData,
+    gameToRenderObject(float* cobjectData,
+        unsigned int* cindexData,
         Uint32 cverticies,
         Uint32 cindicies,
-        const std::vector<const char*>& textureNames,
+        const std::vector<std::string>& textureNames,
         bool orthoProject,
         bool clegacyRender)
     {
@@ -76,6 +69,8 @@ struct gameToRenderObject
         this->viData->indexData = (const unsigned int*)malloc(this->viData->indicies);
         memcpy((void*)this->viData->objectData, cobjectData, this->viData->verticies);
         memcpy((void*)this->viData->indexData, cindexData, this->viData->indicies);
+        //free(cobjectData);
+        //free(cindexData);
         
         this->legacyRender = clegacyRender;//todo
 
@@ -174,10 +169,11 @@ struct vertexBufferStruct
     Uint32 fullIndexDataSize;
     Uint32 fullNumberOfElements;
 
-    const float* vertexData;
+    float* vertexData;
     Uint32 fullVertexDataSize;
 
     Uint32 eachVertexSize;
+    Uint32 eachIndexBufferSize;
 };
 static std::vector<vertexBufferStruct*> vertexBuffers;
 
@@ -214,10 +210,12 @@ struct gpuStruct
 static inline void setup_default_shaders();
 static inline void genTextures();
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
-static inline gameToRenderObject* makeGameObject(const float* cobjectData, const unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<const char*>& textureNames, bool orthoProject, bool batch, bool legacyRender);
+static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender);
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);
 static inline void updateTextureBinding(vertexBufferStruct* textureBindsIds, gameToRenderObject* gameObject);
 static inline void uniFormPerFrame();
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords);
+static inline void updateIndexArray(vertexBufferStruct* vbs);
 
 static float color = 0.0;
 static float colorIncrease = 0.001;
