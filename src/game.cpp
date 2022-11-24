@@ -1,22 +1,25 @@
 static float is = 0;
 static inline void initGame()
 {
-    
-    importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj"); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
+    makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse);
+    std::vector<std::string> textureNames = {"wood.png"};
+
+    importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf"); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
+    //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/untitled.obj");
     rawModelStruct* modelRaw = getModel("test");
 
     for(size_t i = 0; i < modelRaw->includedModels.size(); i++)
     {
         rawModelDataStruct* meshData = modelRaw->includedModels[i];
         gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
-        meshData->numVertices, meshData->numIndices, meshData->textureNames, false, false, false,
+        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),textureNames, false, false, false, //meshData->textureNames
         meshData->normals, meshData->texCoords[0] );
     }
 
     mainCamera.position = *(glm::vec3*)&(gameToRenderObjects[0]->viData->objectData[0]);
 
     
-    makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse);
+    
     for(size_t i = 0; i < 1; i++)
     {
         float triangleData[] = {
@@ -79,7 +82,7 @@ static inline void initGame()
             20, 21, 22,
             22, 23, 20
         };
-        std::vector<std::string> textureNames = {"wood.png"};
+        //std::vector<std::string> textureNames = {"wood.png"};
         gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNames, false, true, false);
         glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
 
@@ -102,7 +105,7 @@ static inline void initGame()
 
 static inline void gameLoop()
 {
-    const float speed = 0.01f;
+    const float speed = 1.0f;
     const glm::vec3 cameraFacingDirVecC = mainCamera.cameraFacingDirVec;
     const glm::vec3 cameraUpC = mainCamera.cameraUp;
 

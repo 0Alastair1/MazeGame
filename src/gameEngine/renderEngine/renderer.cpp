@@ -112,8 +112,8 @@ static inline void initRender()
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE); //enable these
-    glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE); //enable these
+    //glCullFace(GL_BACK);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -162,6 +162,8 @@ static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned in
 //hack
 static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords)
 {
+    cverticies = cobjectData.size() * (sizeof(float) * 9);
+
     float* objectData = (float*)malloc(cobjectData.size() * (sizeof(float) * 9));
     unsigned int* indexData = (unsigned int*)malloc(cindexData.size() * (sizeof(unsigned int)));
 

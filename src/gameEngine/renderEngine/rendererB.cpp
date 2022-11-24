@@ -124,7 +124,7 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         //set uniforms
         //glUniformMatrix3x4fv
         glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
-        glUniform4f(vbs->shader->u_colorUniformLocation, 0.3f, 0.3f, 0.3f, 1.0f);
+        glUniform4f(vbs->shader->u_colorUniformLocation, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -331,28 +331,8 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
 
 static inline void updateTextureBinding(vertexBufferStruct* vbs, gameToRenderObject* gameObject) //texture index of the vbs - todo make changing textures not in vbs
 {
-
-    for(size_t i =0; i < ((gameObject->viData->verticies/4)/3)/3; i++) //todo for the other vertex's texture ids
-    {
-        float texureIndexFloat = -1.0f; //assumes textures for the object are actually in the vbs
-
-        //get the texture name from the objects vertex id
-        const float vertexIndex = gameObject->viData->objectData[(i* 9) + 8];
-        const std::string thisTextureBinded = gameObject->to[(int)vertexIndex]->textureName;
-        
-        //convert that id to the corrasponding texture in the vbs and write back
-        for(size_t ii = 0; i < vbs->texturesBinded.size(); i++)
-        {
-            if(thisTextureBinded == vbs->texturesBinded[ii]->textureName)
-            {
-                texureIndexFloat = i;
-                break;
-            }
-        }
-
-        //rewrite the float with the updated index
-        memcpy((void*)&gameObject->viData->objectData[(i * 9) + 8], &texureIndexFloat, sizeof(float));
-    }
+    
+    
 }
 
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch)
