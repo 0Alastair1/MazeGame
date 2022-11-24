@@ -36,19 +36,20 @@ static inline void setup_default_shaders()
         in vec2 texCord; \
         in float texIndex; \
         \
-        uniform sampler2D TextureSlot0; \
-        uniform sampler2D TextureSlot1; \
-        uniform sampler2D TextureSlot2; \
-        uniform sampler2D TextureSlot3; \
-        uniform sampler2D TextureSlot4; \
-        uniform sampler2D TextureSlot5; \
-        uniform sampler2D TextureSlot6; \
-        uniform sampler2D TextureSlot7; \
-        uniform sampler2D TextureSlot8; \
+        uniform sampler2D TextureSlot0; /*diffuse*/ \
+        uniform sampler2D TextureSlot1; /*normal*/ \
+        uniform sampler2D TextureSlot2; /*specular*/ \
+        uniform sampler2D TextureSlot3; /*height*/ \
+        uniform sampler2D TextureSlot4; /*ambient*/ \
+        uniform sampler2D TextureSlot5; /*light*/ \
+        uniform sampler2D TextureSlot6; /*emissive*/ \
+        uniform sampler2D TextureSlot7; /*shininess*/ \
+        uniform sampler2D TextureSlot8; /*clearcoat*/ \
+        uniform sampler2D TextureSlot9; /*metalness*/ \
         \
         void main()	\
         {	\
-        	color = texture(TextureSlot0, texCord) + fColor; \
+        	color = texture(TextureSlot0, texCord) * fColor; \
         }"
     };
 
@@ -113,6 +114,8 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
         std::string textureSlotFullName = textureSlotName + slotNumber;
 
         shader->textureUniformLocations[i] = glGetUniformLocation(program, textureSlotFullName.c_str()); //todo make this func a std::String
+        if(shader->textureUniformLocations[i] == -1)
+            break;
     }
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");

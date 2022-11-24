@@ -169,7 +169,7 @@ static inline void assimpToModel(const std::string &name, std::string filePath, 
                 std::string texturePath = getCurrentDirectory() + slashS + filePath;
                 std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
 
-                makeTexture(filePathParent + slashS + strs, str.C_Str(), normal, flip);
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), height, flip);
                 rawModelData->textureNames.push_back(str.C_Str());
             }
             for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_AMBIENT); k++)
@@ -186,7 +186,127 @@ static inline void assimpToModel(const std::string &name, std::string filePath, 
                 std::string texturePath = getCurrentDirectory() + slashS + filePath;
                 std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
 
-                makeTexture(filePathParent + slashS + strs, str.C_Str(), height, flip);
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), ambient, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_NORMALS); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_NORMALS, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), normal, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_LIGHTMAP); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_LIGHTMAP, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), light, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_EMISSIVE); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_EMISSIVE, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), emissive, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_SHININESS); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_SHININESS, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), shininess, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_CLEARCOAT); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_CLEARCOAT, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), clearcoat, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_METALNESS); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_METALNESS, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), metalness, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_LIGHTMAP); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_LIGHTMAP, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), light, flip);
                 rawModelData->textureNames.push_back(str.C_Str());
             }
 

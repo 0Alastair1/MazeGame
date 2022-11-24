@@ -6,12 +6,19 @@ enum textureTypeEnum
     normal,
     specular,
     height,
+    ambient,
+    light,
+    emissive,
+    shininess,
+    clearcoat,
+    metalness,
 };
 
 struct textureObject
 {
     std::string textureName;
     Uint32 textureID;
+    textureTypeEnum type;
 };
 
 static std::vector<textureObject*> textureObjects;
