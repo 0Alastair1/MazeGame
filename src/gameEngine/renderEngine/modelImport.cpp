@@ -138,7 +138,72 @@ static inline void assimpToModel(const std::string &name, std::string filePath, 
                 makeTexture(filePathParent + slashS + strs, str.C_Str(), diffuse, flip);
                 rawModelData->textureNames.push_back(str.C_Str());
             }
-            //aiTextureType_SPECULAR aiTextureType_HEIGHT aiTextureType_AMBIENT
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_SPECULAR); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_SPECULAR, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), specular, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_HEIGHT); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_HEIGHT, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), normal, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+            for(size_t k = 0; k < currentMaterial->GetTextureCount(aiTextureType_AMBIENT); k++)
+            {
+                aiString str;
+		        currentMaterial->GetTexture(aiTextureType_AMBIENT, k, &str);
+                const std::string strs = str.C_Str();
+
+                char *slash = getSlash();
+                std::string slashS;
+                slashS.assign(slash, 1);
+                free(slash);
+
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), height, flip);
+                rawModelData->textureNames.push_back(str.C_Str());
+            }
+
+            {
+                aiColor3D col(0.f, 0.f, 0.f);
+
+                currentMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, col);
+                rawModelData->diffuse = glm::vec3(col.r, col.b, col.g);
+
+                currentMaterial->Get(AI_MATKEY_COLOR_AMBIENT, col);
+                rawModelData->ambient = glm::vec3(col.r, col.b, col.g);
+
+                currentMaterial->Get(AI_MATKEY_COLOR_SPECULAR, col);
+                rawModelData->specular = glm::vec3(col.r, col.b, col.g);
+
+                currentMaterial->Get(AI_MATKEY_SHININESS, rawModelData->shininess);
+            }
         }
     }
 
