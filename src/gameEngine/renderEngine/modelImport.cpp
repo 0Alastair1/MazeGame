@@ -73,7 +73,7 @@ static inline void assimpToModel(const std::string &name, std::string filePath)
                     rawModelData->normals.push_back(glm::vec3((float)currentMesh->mNormals[k].x, (float)currentMesh->mNormals[k].y, (float)currentMesh->mNormals[k].z));
                 }
 
-                for(size_t l = 0; l < 8; l++)
+                for(size_t l = 0; l < 1; l++)
                 {
                     if (currentMesh->mTextureCoords[l] != nullptr)
                     {
@@ -81,7 +81,7 @@ static inline void assimpToModel(const std::string &name, std::string filePath)
                         rawModelData->tangents.push_back(std::vector<glm::vec3>());
                         rawModelData->bitangents.push_back(std::vector<glm::vec3>());
 
-                        rawModelData->texCoords[l].push_back(glm::vec2(currentMesh->mTextureCoords[l]->x, currentMesh->mTextureCoords[l]->y));
+                        rawModelData->texCoords[l].push_back(glm::vec2(currentMesh->mTextureCoords[l][k].x, currentMesh->mTextureCoords[l][k].y));
                         //rawModelData->tangents[l].push_back(glm::vec3(currentMesh->mTangents[l].x, currentMesh->mTangents[l].y, currentMesh->mTangents[l].z));
                         //rawModelData->bitangents[l].push_back(glm::vec3(currentMesh->mBitangents[l].x, currentMesh->mBitangents[l].y, currentMesh->mBitangents[l].z));
                     }
@@ -114,7 +114,10 @@ static inline void assimpToModel(const std::string &name, std::string filePath)
                 slashS.assign(slash, 1);
                 free(slash);
 
-                makeTexture(getCurrentDirectory() + slashS + filePath + slashS + std::string("..") + slashS + strs, str.C_Str(), diffuse);
+                std::string texturePath = getCurrentDirectory() + slashS + filePath;
+                std::string filePathParent = texturePath.substr(0, texturePath.find_last_of("/\\"));
+
+                makeTexture(filePathParent + slashS + strs, str.C_Str(), diffuse);
                 rawModelData->textureNames.push_back(str.C_Str());
             }
             //aiTextureType_SPECULAR aiTextureType_HEIGHT aiTextureType_AMBIENT

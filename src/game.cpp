@@ -1,26 +1,24 @@
 static float is = 0;
 static inline void initGame()
 {
-    makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse);
-    std::vector<std::string> textureNames = {"wood.png"};
-
     importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf"); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
-    //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/untitled.obj");
+    //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj");
     rawModelStruct* modelRaw = getModel("test");
 
     for(size_t i = 0; i < modelRaw->includedModels.size(); i++)
     {
         rawModelDataStruct* meshData = modelRaw->includedModels[i];
         gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
-        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),textureNames, false, true, false, //meshData->textureNames
+        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),meshData->textureNames, false, true, false, 
         meshData->normals, meshData->texCoords[0] );
     }
 
     mainCamera.position = *(glm::vec3*)&(gameToRenderObjects[0]->viData->objectData[0]);
 
+    makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse);
+    std::vector<std::string> textureNames = {"wood.png"};
     
-    
-    for(size_t i = 0; i < 5000; i++)
+    for(size_t i = 0; i < 1; i++)
     {
         float triangleData[] = {
             //front
@@ -105,7 +103,7 @@ static inline void initGame()
 
 static inline void gameLoop()
 {
-    const float speed = 1.0f;
+    const float speed = 0.1f;
     const glm::vec3 cameraFacingDirVecC = mainCamera.cameraFacingDirVec;
     const glm::vec3 cameraUpC = mainCamera.cameraUp;
 

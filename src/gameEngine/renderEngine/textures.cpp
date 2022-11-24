@@ -40,10 +40,20 @@ static inline void genTextures() //textures are made automaticlly when added int
 
 static inline void makeTexture(std::string filePath, std::string textureName, textureTypeEnum textureType)
 {
+    for(textureObject* to : textureObjects)
+    {
+        if(to->textureName == textureName)
+        {
+            return;
+        }
+    }
+
     int width = 0;
     int height = 0;
     int bpp = 0;
-    unsigned char* buffer = stbi_load(filePath.c_str(), &width, &height, &bpp, 4);
+
+    auto buffer = stbi_load(filePath.c_str(), &width, &height, &bpp, 4);
+    printf("%s - %s\n", stbi_failure_reason(), filePath.c_str());
 
     unsigned int textureID = 0;
 
