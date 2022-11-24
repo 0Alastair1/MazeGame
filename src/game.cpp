@@ -12,7 +12,7 @@ static inline void initGame()
     {
         rawModelDataStruct* meshData = modelRaw->includedModels[i];
         gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
-        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),textureNames, false, false, false, //meshData->textureNames
+        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),textureNames, false, true, false, //meshData->textureNames
         meshData->normals, meshData->texCoords[0] );
     }
 
@@ -20,7 +20,7 @@ static inline void initGame()
 
     
     
-    for(size_t i = 0; i < 1; i++)
+    for(size_t i = 0; i < 5000; i++)
     {
         float triangleData[] = {
             //front
@@ -82,8 +82,8 @@ static inline void initGame()
             20, 21, 22,
             22, 23, 20
         };
-        //std::vector<std::string> textureNames = {"wood.png"};
-        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNames, false, true, false);
+        std::vector<std::string> textureNamesc = {"wood.png"};
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNamesc, false, true, false);
         glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
 
         mainCamera.position.x = -20.0f;

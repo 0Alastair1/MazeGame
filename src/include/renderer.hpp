@@ -174,6 +174,9 @@ struct vertexBufferStruct
 
     Uint32 eachVertexSize;
     Uint32 eachIndexBufferSize;
+
+    Uint32 maxObjects;
+    bool noBatch;
 };
 static std::vector<vertexBufferStruct*> vertexBuffers;
 
