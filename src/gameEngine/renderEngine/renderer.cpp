@@ -118,7 +118,6 @@ static inline void initRender()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     genTextures();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // increases stability for some reason
 
     //create default shaders - todo add more
     setup_default_shaders();
@@ -133,26 +132,26 @@ static inline void initRender()
     glBindVertexArray(VertexArrayID);
 
     glEnableVertexAttribArray(0); //the 0 corrasponds to the layout value in the shader
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)0 );
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)0 );
 
     glEnableVertexAttribArray(1); //normals
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 3*sizeof(float) ));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)( 3*sizeof(float) ));
 
     glEnableVertexAttribArray(2); //texture coods
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 6*sizeof(float) ));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)( 6*sizeof(float) ));
 
     glEnableVertexAttribArray(3); //texture index
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 9*(sizeof(float)),(void*)( 8*sizeof(float) ));
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)( 8*sizeof(float) ));
 
     return;
 }
 
-static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender)//todo legacyRender
+static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch)
 {
     if(deltaTime >= 5.0f)
         exit(1);
         
-    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject, legacyRender);
+    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject);
     assignGameObjectToVertexBuffer(gameObject, batch);
 
     gameToRenderObjects.push_back(gameObject);
@@ -160,27 +159,27 @@ static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned in
 }
 
 //hack
-static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, bool legacyRender, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords)
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords)
 {
-    cverticies = cobjectData.size() * (sizeof(float) * 9);
+    cverticies = cobjectData.size() * (sizeof(float) * numberOfCollums);
 
-    float* objectData = (float*)malloc(cobjectData.size() * (sizeof(float) * 9));
+    float* objectData = (float*)malloc(cobjectData.size() * (sizeof(float) * numberOfCollums));
     unsigned int* indexData = (unsigned int*)malloc(cindexData.size() * (sizeof(unsigned int)));
 
     for (unsigned int i = 0; i < cobjectData.size(); i++)  
     {
-        objectData[(i * 9) + 0] = cobjectData[i].x;
-        objectData[(i * 9) + 1] = cobjectData[i].y;
-        objectData[(i * 9) + 2] = cobjectData[i].z;
+        objectData[(i * numberOfCollums) + 0] = cobjectData[i].x;
+        objectData[(i * numberOfCollums) + 1] = cobjectData[i].y;
+        objectData[(i * numberOfCollums) + 2] = cobjectData[i].z;
 
-        objectData[(i * 9) + 3] = normals[i].x;
-        objectData[(i * 9) + 4] = normals[i].y;
-        objectData[(i * 9) + 5] = normals[i].z;
+        objectData[(i * numberOfCollums) + 3] = normals[i].x;
+        objectData[(i * numberOfCollums) + 4] = normals[i].y;
+        objectData[(i * numberOfCollums) + 5] = normals[i].z;
 
-        objectData[(i * 9) + 6] = texCoords[i].x;
-        objectData[(i * 9) + 7] = texCoords[i].y;
+        objectData[(i * numberOfCollums) + 6] = texCoords[i].x;
+        objectData[(i * numberOfCollums) + 7] = texCoords[i].y;
 
-        objectData[(i * 9) + 8] = 0.0f;
+        objectData[(i * numberOfCollums) + 8] = 0.0f;
     }
 
     for (unsigned int i = 0; i < cindexData.size(); i++)  
@@ -188,7 +187,7 @@ static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobject
         indexData[i] = cindexData[i];
     }
 
-    return makeGameObject(objectData, indexData, cverticies, cindicies, textureNames, orthoProject, batch, legacyRender);
+    return makeGameObject(objectData, indexData, cverticies, cindicies, textureNames, orthoProject, batch);
 }
 
 /*

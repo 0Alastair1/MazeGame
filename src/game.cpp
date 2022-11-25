@@ -9,7 +9,7 @@ static inline void initGame()
     {
         rawModelDataStruct* meshData = modelRaw->includedModels[i];
         gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
-        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),meshData->textureNames, false, true, false, 
+        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),meshData->textureNames, false, true, 
         meshData->normals, meshData->texCoords[0] );
     }
 
@@ -60,7 +60,6 @@ static inline void initGame()
             /*cords*/ 0.5, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture id*/ 0.0f,
 
         };
-        const unsigned int numberofCollums = 8;
         unsigned int triangleIndecies[] = {
             0, 1, 2,
             0, 2, 3,
@@ -81,8 +80,7 @@ static inline void initGame()
             22, 23, 20
         };
         std::vector<std::string> textureNamesc = {"wood.png"};
-        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNamesc, false, true, false);
-        glClearColor(0.0f, 0.0f, 0.0, 0.0); //bug somewhere, remove this
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNamesc, false, true);
 
         mainCamera.position.x = -20.0f;
         

@@ -56,6 +56,8 @@
 #include <algorithm>
 #include <cstdlib>
 
+#define numberOfCollums (int)9
+
 #include "./include/audio.hpp" 
 #include "./include/textures.hpp"
 #include "./include/renderer.hpp"
