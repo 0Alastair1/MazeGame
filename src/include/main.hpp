@@ -2,6 +2,7 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #define STB_IMAGE_IMPLEMENTATION
 //#define BOOST_NO_EXCEPTIONS
+#define NOMINMAX
 
 #include "../../vendor/SDL/include/SDL.h"
 #include "../../vendor/SDL/include/SDL_stdinc.h"

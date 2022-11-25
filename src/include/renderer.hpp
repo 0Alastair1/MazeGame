@@ -42,6 +42,8 @@ struct gameToRenderObject
     
     bool orthoProj;
 
+    glm::vec4* colorMul;
+
     verticesindexesData* viData; //data of verticies
     std::vector<textureObject*> to; //binded textureobject
 
@@ -174,6 +176,7 @@ struct vertexBufferStruct
 
     Uint32 maxObjects;
     bool noBatch;
+    glm::vec4 colorMul = glm::vec3(1.0f, 1.0f, 1.0f, 1.0f);
 };
 static std::vector<vertexBufferStruct*> vertexBuffers;
 

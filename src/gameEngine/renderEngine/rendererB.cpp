@@ -148,7 +148,7 @@ static inline void render()
     SDL_GL_SwapWindow(window);
 }
 
-static inline void uniFormPerFrame()
+static inline void uniFormPerFrame() //?? use uniform buffer object
 {
     //color uniform
 
@@ -186,7 +186,7 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         //set uniforms
         //glUniformMatrix3x4fv
         glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
-        glUniform4f(vbs->shader->u_colorUniformLocation, 1.0f, 1.0f, 1.0f, 1.0f);
+        glUniform4f(vbs->shader->u_colorUniformLocation, vbs->colorMul.x, vbs->colorMul.y, vbs->colorMul.z, 1.0f);
     }
 }
 
@@ -271,6 +271,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vbs->viIndex = viIndex1;
 
     vbs->bindedGameObjects.push_back(gameObject);
+    gameObject->colorMul = &vbs->colorMul;
 
     //bind shaders
     for(textureObject* to : gameObject->to)
