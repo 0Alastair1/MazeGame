@@ -82,18 +82,22 @@ struct gameToRenderObject
     }
     void update(glm::mat4 modelProj, bool left)
     {
-        //apply given matrix to the models verticies
+        //apply given matrix to the models verticies that need transformation
 
         for(size_t i =0; i < ((this->viData->verticies/4)/3)/3; i++)
         {
-            glm::vec4 tmpChange = glm::vec4(glm::make_vec3(&this->viData->objectData[i * numberOfCollums]), 1.0f);
+            glm::vec4 tmpVertex = glm::vec4(glm::make_vec3(&this->viData->objectData[i * numberOfCollums]), 1.0f);
 
             if(left)
-                tmpChange = modelProj * tmpChange;
+            {
+                tmpVertex = modelProj * tmpVertex;
+            }
             else
-                tmpChange = tmpChange * modelProj;
+            {
+                tmpVertex = tmpVertex * modelProj;
+            }
 
-            memcpy((void*)&this->viData->objectData[i * numberOfCollums], (glm::value_ptr(tmpChange)), sizeof(float) * 3);
+            memcpy((void*)&this->viData->objectData[i * numberOfCollums], (glm::value_ptr(tmpVertex)), sizeof(float) * 3);
         }
     }
     void changePos(float x, float y, float z)
@@ -216,7 +220,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch);
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);
 static inline void uniFormPerFrame();
-static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords);
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords, std::vector<glm::vec3>& tangents);
 static inline void updateIndexArray(vertexBufferStruct* vbs);
 
 static float color = 0.0;

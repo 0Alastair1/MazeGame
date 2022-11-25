@@ -10,7 +10,7 @@ static inline void initGame()
         rawModelDataStruct* meshData = modelRaw->includedModels[i];
         gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
         meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),meshData->textureNames, false, true, 
-        meshData->normals, meshData->texCoords[0] );
+        meshData->normals, meshData->texCoords[0], meshData->tangents);
     }
 
     mainCamera.position = *(glm::vec3*)&(gameToRenderObjects[0]->viData->objectData[0]);
@@ -22,42 +22,42 @@ static inline void initGame()
     {
         float triangleData[] = {
             //front
-            /*cords*/-0.5f, -0.5f, 0.0f,/*normals*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f, -0.5f, 0.0f,/*normals*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*texture id*/ 0.0f,
-            /*cords*/-0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture id*/ 0.0f,
+            /*cords*/-0.5f, -0.5f, 0.0f,/*normals*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ -1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f, -0.5f, 0.0f,/*normals*/ 0.0f, 1.0f, 0.0f, /*tex cords*/  1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/-0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
 
             //left
-            /*cords*/-0.5f, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f,1.0f, /*tex coord*/ -1.0f, 1.0f, /*texture id*/ 0.0f,
-            /*cords*/-0.5f, -0.5f, 0.0f,/*normals*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ 1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/-0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*texture id*/ 0.0f,
-            /*cords*/-0.5f, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 0.0f, /*tex coord*/ -1.0f, -1.0f, /*texture id*/ 0.0f,
+            /*cords*/-0.5f, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f,1.0f, /*tex coord*/ -1.0f, 1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/-0.5f, -0.5f, 0.0f,/*normals*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ 1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/-0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/-0.5f, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 0.0f, /*tex coord*/ -1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
 
 
             //bottom
-            /*cords*/-0.5f, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f,1.0f, /*tex coord*/ 1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f, -0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  -1.0f, 1.0f, /*texture id*/ 0.0f,
-            /*cords*/-0.5f, -0.5f, 0.0f,/*normals*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ 1.0f, 1.0f, /*texture id*/ 0.0f,
+            /*cords*/-0.5f, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f,1.0f, /*tex coord*/ 1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f, -0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/  -1.0f, 1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/-0.5f, -0.5f, 0.0f,/*normals*/ 1.0f, 0.0f, 0.0f, /*tex cords*/ 1.0f, 1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
 
 
             //right
-            /*cords*/ 0.5f, -0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f, -0.5f, -1.0f, /*normals*/ 1.0f, 0.0f, 0.0f, /*tex coord*/ 1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f,  0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*texture id*/ 0.0f,
-            /*cords*/ 0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f, /*texture id*/ 0.0f,
+            /*cords*/ 0.5f, -0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f, -0.5f, -1.0f, /*normals*/ 1.0f, 0.0f, 0.0f, /*tex coord*/ 1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f,  0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f,  0.5f, 0.0f,/*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
 
             //top
-            /*cords*/-0.5f, 0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f, 0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ 0.5f, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*texture id*/ 0.0f,
-            /*cords*/-0.5f, 0.5f, -1.0, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, 1.0f, /*texture id*/ 0.0f,
+            /*cords*/-0.5f, 0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f, 0.5f, 0.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5f, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/-0.5f, 0.5f, -1.0, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, 1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
 
             //back
-            /*cords*/0.5, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ -0.5, -0.5, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ 1.0f, -1.0f, /*texture id*/ 0.0f,
-            /*cords*/ -0.5, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*texture id*/ 0.0f,
-            /*cords*/ 0.5, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*texture id*/ 0.0f,
+            /*cords*/0.5, -0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ -1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ -0.5, -0.5, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex coord*/ 1.0f, -1.0f, /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ -0.5, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ 1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
+            /*cords*/ 0.5, 0.5f, -1.0f, /*normals*/ 0.0f, 0.0f, 1.0f, /*tex cords*/ -1.0f, 1.0f,  /*tangents*/ 0.0f, 0.0f, 0.0f,
 
         };
         unsigned int triangleIndecies[] = {

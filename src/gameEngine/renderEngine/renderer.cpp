@@ -140,8 +140,8 @@ static inline void initRender()
     glEnableVertexAttribArray(2); //texture coods
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)( 6*sizeof(float) ));
 
-    glEnableVertexAttribArray(3); //texture index
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)( 8*sizeof(float) ));
+    glEnableVertexAttribArray(3); //tangents
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, numberOfCollums * (sizeof(float)),(void*)( 8*sizeof(float) ));
 
     return;
 }
@@ -159,7 +159,7 @@ static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned in
 }
 
 //hack
-static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords)
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords, std::vector<glm::vec3>& tangents)
 {
     cverticies = cobjectData.size() * (sizeof(float) * numberOfCollums);
 
@@ -179,7 +179,17 @@ static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobject
         objectData[(i * numberOfCollums) + 6] = texCoords[i].x;
         objectData[(i * numberOfCollums) + 7] = texCoords[i].y;
 
-        objectData[(i * numberOfCollums) + 8] = 0.0f;
+        if(tangents.size() == 0)
+        {
+            objectData[(i * numberOfCollums) + 8] = 0.0f;
+            objectData[(i * numberOfCollums) + 9] = 0.0f;
+            objectData[(i * numberOfCollums) +10] = 0.0f;
+            continue;
+        }
+
+        objectData[(i * numberOfCollums) + 8] = tangents[i].x;
+        objectData[(i * numberOfCollums) + 9] = tangents[i].y;
+        objectData[(i * numberOfCollums) +10] = tangents[i].z;
     }
 
     for (unsigned int i = 0; i < cindexData.size(); i++)  
