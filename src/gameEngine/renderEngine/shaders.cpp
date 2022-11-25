@@ -23,7 +23,8 @@ static inline void setup_default_shaders()
             \
             vec3 tangent = normalize(vec3(vp * vec4(tangents, 0.0)));\
             vec3 normal = normalize(vec3(vp * vec4(normals, 0.0)));\
-            vec3 biTangent = normalize(cross(normal, tangent));\
+            tangent = normalize(tangent - dot(tangent, normal) * normal);\
+            vec3 biTangent = cross(normal, tangent);\
             tbn = mat3(tangent, biTangent, normal);\
             \
         }"
