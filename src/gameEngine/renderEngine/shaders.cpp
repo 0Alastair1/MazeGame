@@ -6,21 +6,25 @@ static inline void setup_default_shaders()
         layout(location = 0) in vec3 vertexes; \
         layout(location = 1) in vec3 normals; \
         layout(location = 2) in vec2 vTexCord; \
-        layout(location = 3) in float textureIndex; \
+        layout(location = 3) in vec3 tangents; \
         \
         uniform vec4 u_Color; \
         uniform mat4 vp; \
         \
         out vec4 fColor;\
         out vec2 texCord; \
-        out float texIndex; \
+        out mat3 tbn; \
         \
         void main()	\
         {	\
         	gl_Position = vp * vec4(vertexes, 1.0);	\
             fColor = u_Color; \
             texCord = vTexCord; \
-            texIndex = textureIndex; \
+            \
+            vec3 tangent = normalize(vec3(vp * vec4(tangents, 0.0)));\
+            vec3 normal = normalize(vec3(vp * vec4(normals, 0.0)));\
+            vec3 biTangent = normalize(cross(normal, tangent));\
+            tbn = mat3(tangent, biTangent, normal);\
             \
         }"
     };
@@ -34,7 +38,7 @@ static inline void setup_default_shaders()
         \
         in vec4 fColor; \
         in vec2 texCord; \
-        in float texIndex; \
+        in mat3 tbn; \
         \
         uniform sampler2D TextureSlot0; /*diffuse*/ \
         uniform sampler2D TextureSlot1; /*normal*/ \
@@ -116,6 +120,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
         shader->textureUniformLocations[i] = glGetUniformLocation(program, textureSlotFullName.c_str()); //todo make this func a std::String
         if(shader->textureUniformLocations[i] == -1)
             break;
+        glUniform1i(shader->textureUniformLocations[i], i);
     }
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");

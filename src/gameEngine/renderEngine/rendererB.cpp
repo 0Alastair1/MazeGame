@@ -48,73 +48,59 @@ static inline void render()
 
         for(size_t i = 0; i < vbs->texturesBinded.size(); i++)
         {
-            /*if(texturesBindedprev[i] != vbs->texturesBinded[i]->textureID)
-            {            
-                glActiveTexture(GL_TEXTURE0 + i); 
-                glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                //glUniform1i(i, vbs->texturesBinded[i]->textureID);
-                texturesBindedprev[i] = vbs->texturesBinded[i]->textureID;
-            }*/
             switch(vbs->texturesBinded[i]->type) //to do multiple textures of same type
             {
                 case textureTypeEnum::diffuse:
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[0], 0);
                     break;
 
                 case textureTypeEnum::normal:
                     glActiveTexture(GL_TEXTURE1);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[1], 1);
                     break;
 
                 case textureTypeEnum::specular:
                     glActiveTexture(GL_TEXTURE2);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[2], 2);
                     break;
 
                 case textureTypeEnum::height:
                     glActiveTexture(GL_TEXTURE3);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[3], 3);
                     break;
 
                 case textureTypeEnum::ambient:
                     glActiveTexture(GL_TEXTURE4);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[4], 4);    
                     break;
 
                 case textureTypeEnum::light:
                     glActiveTexture(GL_TEXTURE5);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[5], 5);
                     break;
 
                 case textureTypeEnum::emissive:
                     glActiveTexture(GL_TEXTURE6);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[6], 6);
                     break;
                     
                 case textureTypeEnum::shininess:
                     glActiveTexture(GL_TEXTURE7);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[7], 7);
                     break;
 
                 case textureTypeEnum::clearcoat:
                     glActiveTexture(GL_TEXTURE8);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[8], 8);
                     break;
 
                 case textureTypeEnum::metalness:
                     glActiveTexture(GL_TEXTURE9);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    glUniform1i(vbs->shader->textureUniformLocations[9], 9);
+                    break;
+
+                default:
                     break;
             }
         }
@@ -133,8 +119,8 @@ static inline void render()
         //texture coods
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, numberOfCollums*(sizeof(float)),(void*)( 6*sizeof(float) ));
 
-        //texture index
-        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, numberOfCollums*(sizeof(float)),(void*)( 8*sizeof(float) ));
+        //tangents
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, numberOfCollums*(sizeof(float)),(void*)( 8*sizeof(float) ));//mm
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbs->indexbuffer);
 

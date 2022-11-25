@@ -56,7 +56,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-#define numberOfCollums (int)9
+#define numberOfCollums (int)11
 
 #include "./include/audio.hpp" 
 #include "./include/textures.hpp"
