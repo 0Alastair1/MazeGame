@@ -4,15 +4,11 @@ project(mazeGame)
 
 set(BUILD_SHARED_LIBS OFF)
 set(ASSIMP_BUILD_ZLIB ON)
-
-set(Boost_USE_STATIC_LIBS OFF) 
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME OFF) 
+set(USE_STATIC_CRT ON)
 
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 #add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/libsamplerate EXCLUDE_FROM_ALL)
-add_subdirectory(vendor/boost EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/assimp EXCLUDE_FROM_ALL)
 
 add_executable(mazeGame src/main.cpp)
@@ -22,24 +18,6 @@ include_directories(mazeGame PUBLIC src/include src/
     vendor 
 
     vendor/ 
-    vendor/boost/libs/config/include/ 
-    vendor/boost/libs/dll/include/ 
-    vendor/boost/libs/filesystem/include/ 
-    vendor/boost/libs/assert/include/ 
-    vendor/boost/libs/system/include/ 
-    vendor/boost/libs/type_traits/include/ 
-    vendor/boost/libs/iterator/include/ 
-    vendor/boost/libs/mpl/include/ 
-    vendor/boost/libs/preprocessor/include/ 
-    vendor/boost/libs/static_assert/include/ 
-    vendor/boost/libs/core/include/ 
-    vendor/boost/libs/detail/include/ 
-    vendor/boost/libs/io/include/ 
-    vendor/boost/libs/functional/include/ 
-    vendor/container_hash/include/ 
-    vendor/boost/libs/smart_ptr/include/ 
-    vendor/boost/libs/throw_exception/include/ 
-    vendor/boost/libs/predef/include/ 
 
 
     vendor/libsamplerate/include/ 
@@ -59,12 +37,10 @@ include_directories(mazeGame PUBLIC src/include src/
 target_link_libraries(mazeGame PRIVATE SDL2-static)
 #target_link_libraries(mazeGame PRIVATE PortAudio)
 target_link_libraries(mazeGame PRIVATE samplerate)
-target_link_libraries(mazeGame PUBLIC Boost::filesystem Boost::system Boost::exception boost_exception Boost::throw_exception)
-target_link_libraries(mazeGame PRIVATE assimp zlibstatic)
+target_link_libraries(mazeGame PRIVATE assimp)
 #target_link_libraries(mazeGame PRIVATE ${OPENGL_gl_LIBRARY})
 
 #add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) 
-#add_definitions(-DBOOST_NO_CXX11_SCOPED_ENUMS)
 #set(CMAKE_BUILD_TYPE Release)
 
 target_compile_features(mazeGame PUBLIC cxx_std_17)

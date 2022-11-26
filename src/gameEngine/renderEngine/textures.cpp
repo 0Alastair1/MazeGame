@@ -1,41 +1,6 @@
 static inline void genTextures() //textures are made automaticlly when added into the textures folder
 {
-    /*
-    boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
-    std::string currentDir = currentDirPath.string();
 
-    char* slashes = getSlash();
-
-    std::string texturesFolder = slashes[0] + (std::string)"textures" + slashes[0];
-    free(slashes);
-    std::string textureDirectory = currentDir + texturesFolder;
-
-    if(!boost::filesystem::exists(textureDirectory))
-    {
-        boost::filesystem::create_directories(textureDirectory);
-    }
-
-    std::vector<std::string> textureNames;
-
-    for (const auto & entry : std::filesystem::directory_iterator(textureDirectory))
-    {
-        if(std::filesystem::is_directory(entry.path()))
-        {
-            continue;
-        }
-
-        textureNames.push_back(std::filesystem::path{entry.path()}.filename().string());
-    }
-
-    stbi_set_flip_vertically_on_load(1);
-
-    for(std::string textureName : textureNames)
-    {
-        
-        std::string filePath = textureDirectory + textureName;
-
-        makeTexture(filePath, textureName);
-    }*/
 }
 
 static inline void makeTexture(std::string filePath, std::string textureName, textureTypeEnum textureType, const bool flip)
@@ -111,8 +76,7 @@ static inline void test()
 
 static inline std::string getTextureDirectory()
 {
-    boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
-    std::string currentDir = currentDirPath.string();
+    std::string currentDir = getCurrentDirectory();
 
     char* slashes = getSlash();
 
@@ -120,18 +84,16 @@ static inline std::string getTextureDirectory()
     free(slashes);
     std::string textureDirectory = currentDir + texturesFolder;
 
-    if(!boost::filesystem::exists(textureDirectory))
-    {
-        boost::filesystem::create_directories(textureDirectory);
-    }
+    std::filesystem::create_directory(textureDirectory);
 
     return textureDirectory;
 }
 
 static inline std::string getCurrentDirectory()
 {
-    boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
-    std::string currentDir = currentDirPath.string();
+    char* currentDirChar = SDL_GetBasePath();
+    std::string currentDir = currentDirChar;
+    free(currentDirChar);
 
     return currentDir;
 }

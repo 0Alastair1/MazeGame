@@ -347,8 +347,7 @@ static inline char *getSlash()
 
 {
     // calc the flashes
-    boost::filesystem::path currentDirPath = boost::dll::program_location().parent_path();
-    std::string currentDir = currentDirPath.string();
+    std::string currentDir = getCurrentDirectory();
 
     for (int i = currentDir.size() - 1; i >= 0; i--)
     {

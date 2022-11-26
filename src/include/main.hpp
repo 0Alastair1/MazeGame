@@ -1,7 +1,7 @@
 #define SDL_MAIN_HANDLED
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #define STB_IMAGE_IMPLEMENTATION
-//#define BOOST_NO_EXCEPTIONS
+
 #define NOMINMAX
 
 #include "../../vendor/SDL/include/SDL.h"
@@ -22,12 +22,6 @@
 #include "../../vendor/imgui/imgui_tables.cpp"
 #include "../../vendor/imgui/imgui_widgets.cpp"
 #include "../../vendor/imgui/backends/imgui_impl_opengl3.cpp"
-
-
-#ifndef __GNUC__
-#undef vsnprintf _vsnprintf
-#endif
-#include "../../vendor/boost/libs/dll/include/boost/dll/runtime_symbol_info.hpp"
 
 #include "../../vendor/portaudio/include/portaudio.h"
 
