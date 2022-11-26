@@ -4,6 +4,11 @@ static inline void initGame()
     importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
     //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj", true);
     rawModelStruct* modelRaw = getModel("test");
+    if(modelRaw == nullptr)
+    {
+        importModel("test1", "../../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false);
+        modelRaw = getModel("test1");
+    }
 
     for(size_t i = 0; i < modelRaw->includedModels.size(); i++)
     {

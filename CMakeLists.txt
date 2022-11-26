@@ -3,13 +3,14 @@ cmake_minimum_required(VERSION 3.8)
 project(mazeGame)
 
 set(BUILD_SHARED_LIBS OFF)
+set(ASSIMP_BUILD_ZLIB ON)
 
 set(Boost_USE_STATIC_LIBS OFF) 
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME OFF) 
 
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
-add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
+#add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/libsamplerate EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/boost EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/assimp EXCLUDE_FROM_ALL)
@@ -35,9 +36,7 @@ include_directories(mazeGame PUBLIC src/include src/
     vendor/boost/libs/detail/include/ 
     vendor/boost/libs/io/include/ 
     vendor/boost/libs/functional/include/ 
-
     vendor/container_hash/include/ 
-
     vendor/boost/libs/smart_ptr/include/ 
     vendor/boost/libs/throw_exception/include/ 
     vendor/boost/libs/predef/include/ 
@@ -58,10 +57,10 @@ include_directories(mazeGame PUBLIC src/include src/
 )
 
 target_link_libraries(mazeGame PRIVATE SDL2-static)
-target_link_libraries(mazeGame PRIVATE PortAudio)
+#target_link_libraries(mazeGame PRIVATE PortAudio)
 target_link_libraries(mazeGame PRIVATE samplerate)
 target_link_libraries(mazeGame PUBLIC Boost::filesystem Boost::system Boost::exception boost_exception Boost::throw_exception)
-target_link_libraries(mazeGame PRIVATE assimp)
+target_link_libraries(mazeGame PRIVATE assimp zlibstatic)
 #target_link_libraries(mazeGame PRIVATE ${OPENGL_gl_LIBRARY})
 
 #add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) 
