@@ -148,8 +148,6 @@ static inline void initRender()
 
 static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch)
 {
-    if(deltaTime >= 5.0f)
-        exit(1);
         
     gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject);
     assignGameObjectToVertexBuffer(gameObject, batch);

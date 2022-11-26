@@ -4,7 +4,6 @@ project(mazeGame)
 
 set(BUILD_SHARED_LIBS OFF)
 set(ASSIMP_BUILD_ZLIB ON)
-set(USE_STATIC_CRT ON)
 
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 #add_subdirectory(vendor/portaudio EXCLUDE_FROM_ALL)
@@ -44,6 +43,12 @@ target_link_libraries(mazeGame PRIVATE assimp)
 #set(CMAKE_BUILD_TYPE Release)
 
 target_compile_features(mazeGame PUBLIC cxx_std_17)
+
+add_custom_command( #todo check if the file actually exists
+    TARGET mazeGame POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<CONFIGURATION>/assimp-vc143-mtd.dll" 
+        $<TARGET_FILE_DIR:mazeGame>)  
  
 add_custom_command(
         TARGET mazeGame POST_BUILD

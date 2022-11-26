@@ -93,7 +93,7 @@ static inline std::string getCurrentDirectory()
 {
     char* currentDirChar = SDL_GetBasePath();
     std::string currentDir = currentDirChar;
-    free(currentDirChar);
+    //free(currentDirChar); //todo check if commenting this out causes memory leak
 
     return currentDir;
 }
