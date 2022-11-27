@@ -44,12 +44,13 @@ target_link_libraries(mazeGame PRIVATE assimp)
 
 target_compile_features(mazeGame PUBLIC cxx_std_17)
 
-add_custom_command( #todo check if the file actually exists
-    TARGET mazeGame POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<CONFIGURATION>/assimp-vc143-mtd.dll" 
-        $<TARGET_FILE_DIR:mazeGame>)  
- 
+
+add_custom_command(TARGET mazeGame POST_BUILD COMMAND ${CMAKE_COMMAND}
+    -DFROM="${PROJECT_SOURCE_DIR}/build/vendor/assimp/bin/$<CONFIG>/assimp-vc143-mtd.dll"
+    -DTO=$<TARGET_FILE_DIR:mazeGame>
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/checkFile.cmake
+ )
+
 add_custom_command(
         TARGET mazeGame POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
