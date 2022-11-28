@@ -84,9 +84,13 @@ struct gameToRenderObject
     {
         //apply given matrix to the models verticies that need transformation
 
-        for(size_t i =0; i < ((this->viData->verticies/4)/3)/3; i++)
+        for(size_t i =0; i < (this->viData->verticies/sizeof(float))/numberOfCollums; i++)
         {
-            glm::vec4 tmpVertex = glm::vec4(glm::make_vec3(&this->viData->objectData[i * numberOfCollums]), 1.0f);
+            glm::vec4 tmpVertex; //= glm::vec4(glm::make_vec3(&this->viData->objectData[i * numberOfCollums]), 1.0f);
+            tmpVertex.x = this->viData->objectData[i * numberOfCollums];
+            tmpVertex.y = this->viData->objectData[i * numberOfCollums + 1];
+            tmpVertex.z = this->viData->objectData[i * numberOfCollums + 2];
+            tmpVertex.w = 1.0f;
 
             if(left)
             {
