@@ -151,24 +151,28 @@ static inline void uniFormPerFrame() //?? use uniform buffer object
 
 static inline void performUniformOperation(const vertexBufferStruct* vbs, const glm::mat4 viewMatrix)
 {
+    //todo put matrix stuff in uniform object?
+
+    //projection matrix
+    glm::mat4 projectionMatrix;
+
+    if(vbs->orthoProj)
+        projectionMatrix = mainCamera.orthoProjectionMatrix; //todo translate by camera rotation
+    else
+        projectionMatrix = mainCamera.perspectiveProjectionMatrix;
     
+    //mvp - projection * view * model
+    glm::mat4 vp = projectionMatrix * viewMatrix;
+
     if(!strcmp(vbs->shader->shaderName.c_str(), "defaultShader")) //fixme dont hardcode in use forloop maybe not
-    {
-
-        //todo put matrix stuff in uniform object?
-
-        //projection matrix
-        glm::mat4 projectionMatrix;
-    
-        if(vbs->orthoProj)
-            projectionMatrix = mainCamera.orthoProjectionMatrix; //todo translate by camera rotation
-        else
-            projectionMatrix = mainCamera.perspectiveProjectionMatrix;
-        
-
-        //mvp - projection * view * model
-        glm::mat4 vp = projectionMatrix * viewMatrix;
-        
+    { 
+        //set uniforms
+        //glUniformMatrix3x4fv
+        glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
+        glUniform4f(vbs->shader->u_colorUniformLocation, vbs->colorMul.x, vbs->colorMul.y, vbs->colorMul.z, 1.0f);
+    }
+    if(!strcmp(vbs->shader->shaderName.c_str(), "testShader")) //fixme dont hardcode in use forloop maybe not
+    { 
         //set uniforms
         //glUniformMatrix3x4fv
         glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
@@ -259,10 +263,20 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
     vbs->bindedGameObjects.push_back(gameObject);
     gameObject->colorMul = &vbs->colorMul;
 
+
+    vbs->shader = getShader("defaultShader");
+
     //bind shaders
     for(textureObject* to : gameObject->to)
     {
         vbs->texturesBinded.push_back(to);
+        for(size_t i = 0; i < textureToShader.size(); i++)
+        {
+            if(to->textureName == textureToShader[i])
+            {
+                vbs->shader = getShader(shadersFromTexture[i].c_str());
+            }
+        }
     }
 
     if(batch)

@@ -97,3 +97,9 @@ static inline std::string getCurrentDirectory()
 
     return currentDir;
 }
+
+static inline void assignShaderToTexture(const std::string& textureName, const std::string& shaderName)
+{
+    textureToShader.push_back(textureName);
+    shadersFromTexture.push_back(shaderName);
+}

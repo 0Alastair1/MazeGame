@@ -62,6 +62,7 @@
 #include "./include/rendererB.hpp"
 #include "./include/modelImport.hpp"
 
+
 static SDL_Window *window;
 static SDL_GLContext glContext;
 
@@ -76,6 +77,7 @@ static inline void mainLoop();
 Uint64 prevFrame = 0;
 float deltaTime = 0;
 
+#include "gameEngine/renderEngine/shadersSrc.cpp"
 #include "windowUi.cpp"
 #include "gameEngine/audioEngine/audio.cpp"
 #include "gameEngine/renderEngine/renderer.cpp"

@@ -1,6 +1,7 @@
 static inline void initRender();
 static inline void render();
 
+
 static inline textureObject* getTexture(const char* textureName);
 struct shaderObject
 {
@@ -47,6 +48,17 @@ struct gameToRenderObject
     verticesindexesData* viData; //data of verticies
     std::vector<textureObject*> to; //binded textureobject
 
+    //textures
+    Sint32 diffuse;
+    Sint32 normal;
+    Sint32 specular;
+    Sint32 height;
+    Sint32 ambient; 
+    Sint32 light;
+    Sint32 emissive;
+    Sint32 shininess;
+    Sint32 clearcoat;
+    Sint32 metalness;
 
     gameToRenderObject(float* cobjectData,
         unsigned int* cindexData,
@@ -71,11 +83,49 @@ struct gameToRenderObject
         memcpy((void*)this->viData->indexData, cindexData, this->viData->indicies);
         //free(cobjectData);
         //free(cindexData);
-        
 
         for(size_t i = 0; i < textureNames.size(); i++)
         {
-            to.push_back(getTexture(textureNames[i]));
+            textureObject* to2 = getTexture(textureNames[i]); 
+            to.push_back(to2);
+            const textureObject* to1 = to2; 
+
+            switch(to1->type)
+            {
+                case textureTypeEnum::diffuse:
+                    this->diffuse = to1->textureID;
+                    break;
+                case textureTypeEnum::normal:
+                    this->normal = to1->textureID;
+                    break;
+                case textureTypeEnum::specular:
+                    this->specular = to1->textureID;
+                    break;
+                case textureTypeEnum::height:
+                    this->height = to1->textureID;
+                    break;
+                case textureTypeEnum::ambient:
+                    this->ambient = to1->textureID;
+                    break;
+                case textureTypeEnum::light:
+                    this->light = to1->textureID;
+                    break;
+                case textureTypeEnum::emissive:
+                    this->emissive = to1->textureID;
+                    break;
+                case textureTypeEnum::shininess:
+                    this->shininess = to1->textureID;
+                    break;
+                case textureTypeEnum::clearcoat:
+                    this->clearcoat = to1->textureID;
+                    break;
+                case textureTypeEnum::metalness:
+                    this->metalness = to1->textureID;
+                    break;
+                                    
+                default:
+                    break;
+            }
         }
 
         verticiesChanged = true;
@@ -102,6 +152,8 @@ struct gameToRenderObject
             }
 
             memcpy((void*)&this->viData->objectData[i * numberOfCollums], (glm::value_ptr(tmpVertex)), sizeof(float) * 3);
+
+            this->verticiesChanged = true;
         }
     }
     void changePos(float x, float y, float z)
@@ -110,48 +162,38 @@ struct gameToRenderObject
         this->position = glm::vec3(x, y, z);
         glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), toPosVector);
         this->update(modelPosition, true);
-        this->verticiesChanged = true;
-    }
-    
-    void movePosBy(float x, float y, float z)
-    {
-        this->position = glm::vec3(x, y, z);
-        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), this->position);
-        this->update(modelPosition, true);
-        this->verticiesChanged = true;
     }
     /*
     void changeScale(float x, float y, float z) //todo
     {
         this->scale = glm::vec3(x, y, z );
         //this->update();
-        this->verticiesChanged = true;
     }
     */
-   /*
     void changeRotation(float x, float y, float z)
     {
         auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));
         rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(y), glm::normalize(glm::vec3(0,1,0)));
         rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(0,0,1)));
-        this->update(rotationMatrix, false);
 
-        this->verticiesChanged = true;
-    }*/
+        glm::mat4 modelPosition = glm::translate(glm::mat4(1.0f), this->position);
+
+        this->update(rotationMatrix * modelPosition, true);
+    }
     void changeRotationGlobal(float x, float y, float z)
     {
-        this->rotation += glm::vec3(x,y,z);//? maybe make a get rotatoin func?
+        this->rotation = glm::vec3(x,y,z);//? maybe make a get rotatoin func?
         auto rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(1,0,0)));
         rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(y), glm::normalize(glm::vec3(0,1,0)));
         rotationMatrix  *= glm::rotate(glm::mat4(1.0f), glm::radians(x), glm::normalize(glm::vec3(0,0,1)));
         this->update(rotationMatrix, true);
-
-        this->verticiesChanged = true;
     }
     void lookAt(glm::vec3 loc) //broken
     {
-        const glm::mat4 lookAtMatrix = glm::inverse(glm::lookAt(this->position, loc, glm::vec3(0, 1, 0)));
-        this->update(lookAtMatrix, true);
+        static glm::mat4 prevMatrix = glm::mat4();
+        const glm::mat4 lookAtMatrix = glm::inverse(glm::lookAt(this->position, this->position + loc, glm::vec3(0, 1, 0)));
+        this->update(lookAtMatrix - prevMatrix, true);
+        prevMatrix = lookAtMatrix - prevMatrix;
     }
 
 };
@@ -164,7 +206,7 @@ struct vertexBufferStruct
     std::vector<textureObject*> texturesBinded;
     std::vector<gameToRenderObject*> bindedGameObjects;
 
-    shaderObject* shader = getShader("defaultShader");
+    shaderObject* shader;
     bool orthoProj;
 
     //opengl vertex buffer and index buffer
