@@ -10,7 +10,10 @@ struct shaderObject
     Sint32 textureUniformLocations[32];
     Sint32 u_colorUniformLocation;
     Sint32 u_mvpUniformLocation;
-    std::unordered_map<const char*, Sint32> nonGenericUniformlocations;
+    Sint32 u_ambientLightColLocation;
+    Sint32 u_ambientLightIntensityLocation;
+    Sint32 u_matAmbientLightColLocation;
+    std::unordered_map<const char*, Sint32> nonGenericUniformlocations; //remove maybe
 };
 static std::vector<shaderObject*> shaderObjects;
 
@@ -60,18 +63,22 @@ struct gameToRenderObject
     Sint32 clearcoat;
     Sint32 metalness;
 
+    glm::vec3 ambientLightCol;
+
     gameToRenderObject(float* cobjectData,
         unsigned int* cindexData,
         Uint32 cverticies,
         Uint32 cindicies,
         const std::vector<std::string>& textureNames,
-        bool orthoProject)
+        bool orthoProject,
+        const glm::vec3 cambientColor)
     {
         this->id = 0;
         this->position = glm::vec3(0.0f, 0.0f, 0.0f);
         this->scale = { 1.0f, 1.0f, 1.0f};
         this->rotation = {0.0f ,0.0f, 0.0f};
         this->orthoProj = orthoProject;
+        this->ambientLightCol = cambientColor;
 
         this->viData = new verticesindexesData;
 
@@ -263,11 +270,11 @@ struct gpuStruct
 static inline void setup_default_shaders();
 static inline void genTextures();
 static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, const char* shaderName);
-static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch);
+static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, const glm::vec3 ambientCol);
 static inline glm::vec3 yawPitchDirectionCalc(float yaw, float pitch);
 static inline void uniFormPerFrame();
-static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords, std::vector<glm::vec3>& tangents);
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords, std::vector<glm::vec3>& tangents, const glm::vec3 ambientCol);
 static inline void updateIndexArray(vertexBufferStruct* vbs);
 
-static float color = 0.0;
-static float colorIncrease = 0.001;
+static float color = 0.0f;
+static float colorIncrease = 0.001f;

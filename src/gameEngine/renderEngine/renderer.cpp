@@ -104,8 +104,8 @@ static inline void initRender()
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    const float ratio = windowwidth/windowheight;
-    const float scale = 700.0; 
+    const float ratio = (float)((float)windowwidth/(float)windowheight);
+    const float scale = 700.0f; 
     mainCamera.orthoProjectionMatrix = glm::ortho(-windowwidth/scale, windowwidth/scale, -windowheight/scale, windowheight/scale, -1.0f, 100.0f );
 
     SDL_GL_SetSwapInterval(0); // no vysnc
@@ -146,10 +146,10 @@ static inline void initRender()
     return;
 }
 
-static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch)
+static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned int* cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, const glm::vec3 ambientCol)
 {
         
-    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject);
+    gameToRenderObject* gameObject = new gameToRenderObject(cobjectData, cindexData, cverticies, cindicies, textureNames, orthoProject, ambientCol);
     assignGameObjectToVertexBuffer(gameObject, batch);
 
     gameToRenderObjects.push_back(gameObject);
@@ -157,7 +157,7 @@ static inline gameToRenderObject* makeGameObject(float* cobjectData, unsigned in
 }
 
 //hack
-static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords, std::vector<glm::vec3>& tangents)
+static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobjectData, std::vector<Uint32>& cindexData, Uint32 cverticies, Uint32 cindicies, const std::vector<std::string>& textureNames, bool orthoProject, bool batch, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& texCoords, std::vector<glm::vec3>& tangents, const glm::vec3 ambientCol)
 {
     cverticies = cobjectData.size() * (sizeof(float) * numberOfCollums);
 
@@ -195,7 +195,7 @@ static inline gameToRenderObject* makeGameObject(std::vector<glm::vec3>& cobject
         indexData[i] = cindexData[i];
     }
 
-    return makeGameObject(objectData, indexData, cverticies, cindicies, textureNames, orthoProject, batch);
+    return makeGameObject(objectData, indexData, cverticies, cindicies, textureNames, orthoProject, batch, ambientCol);
 }
 
 /*

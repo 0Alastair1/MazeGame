@@ -1,31 +1,31 @@
 static float is = 0;
 static inline void initGame()
 {
-    //importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
-    //importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj", true);
-   // rawModelStruct* modelRaw = getModel("test");
-    //if(modelRaw == nullptr)
-    //{
-    //    importModel("test1", "../../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false);
-    //    modelRaw = getModel("test1");
-   // }
+    importModel("test", "../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false); //todo can be combineded into a single vertexbuffer use the meshes index and their textures to calc the texture id
+    importModel("test", "../vendor/glTF-Sample-Models/2.0/aa/backpack.obj", true);
+    rawModelStruct* modelRaw = getModel("test");
+    if(modelRaw == nullptr)
+    {
+        importModel("test1", "../../vendor/glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf", false);
+        modelRaw = getModel("test1");
+    }
 
-   // for(size_t i = 0; i < modelRaw->includedModels.size(); i++)
-   // {
-     //   rawModelDataStruct* meshData = modelRaw->includedModels[i];
-     //   gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
-     //   meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),meshData->textureNames, false, true, 
-    //    meshData->normals, meshData->texCoords[0], meshData->tangents);
-//}
+    for(size_t i = 0; i < modelRaw->includedModels.size(); i++)
+    {
+        rawModelDataStruct* meshData = modelRaw->includedModels[i];
+        gameToRenderObject* gameObject = makeGameObject(meshData->positions,meshData->indices, 
+        meshData->numVertices * sizeof(glm::vec3), meshData->numIndices * sizeof(Uint32),meshData->textureNames, false, true, 
+        meshData->normals, meshData->texCoords[0], meshData->tangents, meshData->ambient);
+}
 
     
-  //  mainCamera.position = *(glm::vec3*)&(gameToRenderObjects[0]->viData->objectData[0]);
+    mainCamera.position = *(glm::vec3*)&(gameToRenderObjects[0]->viData->objectData[0]);
 
     makeTexture(getTextureDirectory() + "wood.png", "wood.png", diffuse, true);
     assignShaderToTexture("wood.png", "defaultShader");
     std::vector<std::string> textureNames = {"wood.png"};
     
-    for(size_t i = 0; i < 1000; i++)
+    for(size_t i = 0; i < 1; i++)
     {
         float triangleData[] = {
             //front
@@ -87,7 +87,7 @@ static inline void initGame()
             22, 23, 20
         };
         std::vector<std::string> textureNamesc = {"wood.png"};
-        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNamesc, false, true);
+        gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNamesc, false, true, glm::vec3(1.0f, 1.0f, 1.0f));
 
         mainCamera.position.x = -20.0f;
         

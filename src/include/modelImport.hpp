@@ -11,10 +11,10 @@ struct rawModelDataStruct
     std::vector<glm::vec3> tangents;
     std::vector<glm::vec3> bitangents;
 
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-    float shininess;
+    glm::vec3 ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec3 diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
+    float shininess = 1.0f;
     
 
     Uint32 numVertices;

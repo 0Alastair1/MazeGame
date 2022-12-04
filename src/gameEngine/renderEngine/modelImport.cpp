@@ -28,7 +28,7 @@ static inline void assimpToModel(const std::string &name, std::string filePath, 
     rawModel->name = name;
 
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -312,17 +312,19 @@ static inline void assimpToModel(const std::string &name, std::string filePath, 
 
             {
                 aiColor3D col(0.f, 0.f, 0.f);
+                float amount;
 
-                currentMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, col);
-                rawModelData->diffuse = glm::vec3(col.r, col.b, col.g);
+                if(currentMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, col) == AI_SUCCESS)
+                    rawModelData->diffuse = glm::vec3(col.r, col.b, col.g);
 
-                currentMaterial->Get(AI_MATKEY_COLOR_AMBIENT, col);
+                if(currentMaterial->Get(AI_MATKEY_COLOR_AMBIENT, col) == AI_SUCCESS)
                 rawModelData->ambient = glm::vec3(col.r, col.b, col.g);
 
-                currentMaterial->Get(AI_MATKEY_COLOR_SPECULAR, col);
+                if(currentMaterial->Get(AI_MATKEY_COLOR_SPECULAR, col) == AI_SUCCESS)
                 rawModelData->specular = glm::vec3(col.r, col.b, col.g);
 
-                currentMaterial->Get(AI_MATKEY_SHININESS, rawModelData->shininess);
+                if(currentMaterial->Get(AI_MATKEY_SHININESS, amount) == AI_SUCCESS)
+                    rawModelData->shininess = amount;
             }
         }
     }

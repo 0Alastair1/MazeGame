@@ -27,7 +27,7 @@ static inline void render()
             prevShader = vbs->shader->shaderID;
         }
 
-        performUniformOperation(vbs, viewMatrix);
+        //performUniformOperation(vbs, viewMatrix);
 
         size_t gameObjectIndex = 0;
         const float* vertexDest =  vbs->vertexData;
@@ -35,6 +35,8 @@ static inline void render()
         
         for(gameToRenderObject* gameObject : vbs->bindedGameObjects)
         {
+            performUniformOperation(vbs, viewMatrix, gameObject);
+
             if(gameObject->verticiesChanged == false)
                 continue;
             
@@ -149,7 +151,7 @@ static inline void uniFormPerFrame() //?? use uniform buffer object
 
 }
 
-static inline void performUniformOperation(const vertexBufferStruct* vbs, const glm::mat4 viewMatrix)
+static inline void performUniformOperation(const vertexBufferStruct* vbs, const glm::mat4 viewMatrix, const gameToRenderObject* gameObject)//seperate into uniform object
 {
     //todo put matrix stuff in uniform object?
 
@@ -169,7 +171,9 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         //set uniforms
         //glUniformMatrix3x4fv
         glUniformMatrix4fv(vbs->shader->u_mvpUniformLocation, 1, GL_FALSE, &vp[0][0]);
-        glUniform4f(vbs->shader->u_colorUniformLocation, vbs->colorMul.x, vbs->colorMul.y, vbs->colorMul.z, 1.0f);
+        glUniform3f(vbs->shader->u_ambientLightColLocation, generalLight.ambientLightCol.x, generalLight.ambientLightCol.y, generalLight.ambientLightCol.z);
+        glUniform3f(vbs->shader->u_ambientLightIntensityLocation, generalLight.ambientLightIntensity.x, generalLight.ambientLightIntensity.y, generalLight.ambientLightIntensity.z);
+        glUniform3f(vbs->shader->u_matAmbientLightColLocation, gameObject->ambientLightCol.x, gameObject->ambientLightCol.y, gameObject->ambientLightCol.z);
     }
     if(!strcmp(vbs->shader->shaderName.c_str(), "testShader")) //fixme dont hardcode in use forloop maybe not
     { 
@@ -222,7 +226,7 @@ static inline void assignGameObjectToVertexBuffer(gameToRenderObject* gameObject
         std::vector<vertexBufferStruct*> possiblevbs;    
         for(vertexBufferStruct* vbs : vertexBuffers)
         {
-            if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < vbs->maxObjects && vbs->noBatch == false)
+            if(vbs->viIndex == viIndex1 && vbs->bindedGameObjects.size() < vbs->maxObjects)
             {
                 possiblevbs.push_back(vbs);
             }

@@ -69,6 +69,9 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");
     shader->u_mvpUniformLocation = glGetUniformLocation(program, "vp");
+    shader->u_ambientLightColLocation = glGetUniformLocation(program, "ambientLightCol");
+    shader->u_ambientLightIntensityLocation = glGetUniformLocation(program, "ambientLightIntensity");
+    shader->u_matAmbientLightColLocation = glGetUniformLocation(program, "matAmbientLightCol");
 
     //non generic uniforms
     const char* index = vertexSrc;
