@@ -53,12 +53,12 @@ static inline void render()
             switch(vbs->texturesBinded[i]->type) //to do multiple textures of same type
             {
                 case textureTypeEnum::diffuse:
-                    glActiveTexture(GL_TEXTURE0);
+                    glActiveTexture(GL_TEXTURE1);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
                     break;
 
                 case textureTypeEnum::normal:
-                    glActiveTexture(GL_TEXTURE1);
+                    glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
                     break;
 
@@ -174,6 +174,16 @@ static inline void performUniformOperation(const vertexBufferStruct* vbs, const 
         glUniform3f(vbs->shader->u_ambientLightColLocation, generalLight.ambientLightCol.x, generalLight.ambientLightCol.y, generalLight.ambientLightCol.z);
         glUniform3f(vbs->shader->u_ambientLightIntensityLocation, generalLight.ambientLightIntensity.x, generalLight.ambientLightIntensity.y, generalLight.ambientLightIntensity.z);
         glUniform3f(vbs->shader->u_matAmbientLightColLocation, gameObject->ambientLightCol.x, gameObject->ambientLightCol.y, gameObject->ambientLightCol.z);
+        //static float testin = 0.0f;
+       // testin+= 0.0001f;
+        //glUniform3f(vbs->shader->uDirectionLightLocLocation, generalLight.directionDiffuseDirection.x + testin, generalLight.directionDiffuseDirection.y, generalLight.directionDiffuseDirection.z);
+       //glUniform3f(vbs->shader->uDirectionLightLocLocation, -4000.0f,0.0,0.0f);
+       //glUniform3f(vbs->shader->uDirectionLightLocLocation, mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
+       //printf("posx = %f, posy = %f, posz = %f", mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
+      // printf("\n");
+        glUniform3f(vbs->shader->uDirectionLightLocLocation, testObj->position.x, testObj->position.y, testObj->position.z);
+        glUniform3f(vbs->shader->uDirectionLightIntensityLocation, generalLight.directionDiffuseIntensity.x, generalLight.directionDiffuseIntensity.y, generalLight.directionDiffuseIntensity.z);
+        glUniform3f(vbs->shader->uDiffuseLightColLocation, gameObject->diffuseLightCol.x, gameObject->diffuseLightCol.y, gameObject->diffuseLightCol.z);
     }
     if(!strcmp(vbs->shader->shaderName.c_str(), "testShader")) //fixme dont hardcode in use forloop maybe not
     { 

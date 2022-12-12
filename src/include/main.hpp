@@ -61,7 +61,7 @@
 #include "./include/game.hpp"
 #include "./include/rendererB.hpp"
 #include "./include/modelImport.hpp"
-
+gameToRenderObject* testObj;
 
 static SDL_Window *window;
 static SDL_GLContext glContext;
