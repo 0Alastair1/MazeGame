@@ -1,6 +1,6 @@
 static const char defaultVsSource[] =
 {
-    "#version 330 core \n \
+    "#version 400 core \n \
     layout(location = 0) in vec3 vertexes; \
     layout(location = 1) in vec3 normals; \
     layout(location = 2) in vec2 vTexCord; \
@@ -27,7 +27,7 @@ static const char defaultVsSource[] =
 
 static const char defaultFsSource[] =
 {
-    "#version 330 core \n    \
+    "#version 400 core \n    \
     layout(location = 0) out vec4 color;	\
     \
     in vec2 texCord; \
@@ -51,7 +51,8 @@ static const char defaultFsSource[] =
     \
     void main()	\
     {	\
-        color = texture(TextureSlot0, texCord) * (vec4(ambientLightCol, 1.0f) * vec4(ambientLightIntensity, 1.0f)) * vec4(matAmbientLightCol, 1.0); \
+        vec4 normal = texture(TextureSlot1, texCord) * 0.001;	\
+        color = texture(TextureSlot0, texCord) * (vec4(ambientLightCol, 1.0f) * vec4(ambientLightIntensity*1.3, 1.0f)) * vec4(matAmbientLightCol, 1.0) + normal; \
     }"
 };
 

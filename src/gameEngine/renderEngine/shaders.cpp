@@ -53,7 +53,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
     shader->shaderName = shaderName;
 
     //get locations from shader- generic
-    for (size_t i = 0; i < 32; i++)
+    for (size_t i = 0; i < 32; i++) //i increments on each iteration
     {
         const char* textureSlotName = "TextureSlot";
         std::stringstream ss;
@@ -64,7 +64,7 @@ static inline void makeShader(const char* vertexSrc, const char* fragmentSrc, co
         shader->textureUniformLocations[i] = glGetUniformLocation(program, textureSlotFullName.c_str()); //todo make this func a std::String
         if(shader->textureUniformLocations[i] == -1)
             break;
-        glUniform1i(shader->textureUniformLocations[i], i);
+        //glUniform1i(shader->textureUniformLocations[i], i);
     }
 
     shader->u_colorUniformLocation = glGetUniformLocation(program, "u_Color");

@@ -52,54 +52,66 @@ static inline void render()
         {
             switch(vbs->texturesBinded[i]->type) //to do multiple textures of same type
             {
-                case textureTypeEnum::diffuse:
-                    glActiveTexture(GL_TEXTURE1);
-                    glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
-                    break;
 
-                case textureTypeEnum::normal:
+
+                case textureTypeEnum::diffuse:
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 0);
+                    break;
+
+                    case textureTypeEnum::normal:
+                    glActiveTexture(GL_TEXTURE1);
+                    glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 1);
                     break;
 
                 case textureTypeEnum::specular:
                     glActiveTexture(GL_TEXTURE2);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 2);
                     break;
 
                 case textureTypeEnum::height:
                     glActiveTexture(GL_TEXTURE3);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 3);
                     break;
 
                 case textureTypeEnum::ambient:
                     glActiveTexture(GL_TEXTURE4);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 4);
                     break;
 
                 case textureTypeEnum::light:
                     glActiveTexture(GL_TEXTURE5);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 5);
                     break;
 
                 case textureTypeEnum::emissive:
                     glActiveTexture(GL_TEXTURE6);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 6);
                     break;
                     
                 case textureTypeEnum::shininess:
                     glActiveTexture(GL_TEXTURE7);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 7);
                     break;
 
                 case textureTypeEnum::clearcoat:
                     glActiveTexture(GL_TEXTURE8);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 8);
                     break;
 
                 case textureTypeEnum::metalness:
                     glActiveTexture(GL_TEXTURE9);
                     glBindTexture(GL_TEXTURE_2D, vbs->texturesBinded[i]->textureID);
+                    glUniform1i(vbs->shader->textureUniformLocations[i], 9);
                     break;
 
                 default:
