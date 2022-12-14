@@ -46,17 +46,19 @@ static inline void render()
             gameObjectIndex++;
         }
 
-        //bind textures - todo optimize this
-
+        Sint32 prevShaderID = -1;
         for(size_t i = 0; i < vbs->texturesBinded.size(); i++)
         {
+            if(prevShaderID == vbs->texturesBinded[i]->textureID)
+                continue;
+
+            prevShaderID = vbs->texturesBinded[i]->textureID;
+
             Sint32 activeTextureUnit = 0;
             glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTextureUnit);
 
             switch(vbs->texturesBinded[i]->type) //to do multiple textures of same type
             {
-
-
                 case textureTypeEnum::diffuse:
                     if(activeTextureUnit != GL_TEXTURE0)
                         glActiveTexture(GL_TEXTURE0);

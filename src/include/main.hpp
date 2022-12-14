@@ -74,7 +74,6 @@ int windowheight;
 static inline void program_exit(bool val);
 static inline void mainLoop();
 
-Uint64 prevFrame = 0;
 float deltaTime = 0;
 
 #include "gameEngine/renderEngine/shadersSrc.cpp"

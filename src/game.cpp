@@ -107,7 +107,6 @@ static inline void initGame()
         gameToRenderObject* gameObject = makeGameObject(&triangleData[0], &triangleIndecies[0], sizeof(triangleData), sizeof(triangleIndecies), textureNamesc, false, true, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
         testObj = gameObject;
-        mainCamera.position = glm::vec3(0.0f, 200.0f,-250.0f);
         
         //const float amount = 1000;
         //float v2 = (rand() % (int)amount + 1)/3; 
@@ -118,7 +117,10 @@ static inline void initGame()
         //gameObject->lookAt(mainCamera.position);
         //gameObject->changeRotationGlobal(0.0, 0.0, 0.0);
     }
-mainCamera.position = glm::vec3(0.0f, 0.0f,-25.0f);
+    
+    mainCamera.position = glm::vec3(0.0f, 0.0f,-25.0f);
+    testObj->changePos(0.0f, 0.0f,-25.0f);
+    
     for(gameToRenderObject* gameObject : gameToRenderObjects)
     {
         //gameObject->changePos(gameObject->position.x +(9000.0f), gameObject->position.y, gameObject->position.z);
@@ -163,7 +165,6 @@ static inline void gameLoop()
 
    // i = (i % 400) - 400;
    
-    testObj->changePos(0.0f, 0.0f,-25.0f);
     for(gameToRenderObject* gameObject : gameToRenderObjects)
     {
         if(gameObject == testObj)
